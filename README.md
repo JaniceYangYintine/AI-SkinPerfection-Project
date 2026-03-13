@@ -19,47 +19,180 @@
 
 ## 🏗️ 系統架構
 
+# AI SkinPerfection
+
+## System Architecture
 graph TB
-    subgraph "前端與追蹤"
+    %% =========================
+    %% 使用者層
+    %% =========================
+    subgraph USER["使用者互動層"]
         U[LINE 使用者]
-        LIFF[前端網頁]
-        GA4[GA4 數據分析]
+        LIFF[LIFF 前端網頁]
+        LINEAPI[LINE Messaging API]
     end
-   
-    subgraph "核心邏輯 (雲端樞紐)"
-        N8N[n8n 工作流]
+
+    %% =========================
+    %% 追蹤分析層
+    %% =========================
+    subgraph TRACK["追蹤與分析層"]
+        GA4[GA4 事件追蹤]
     end
-   
-    subgraph "AI 服務"
-        YOLO[YOLO 模型服務]
-        Gemini[Gemini API]
+
+    %% =========================
+    %% 工作流與後端控制層
+    %% =========================
+    subgraph ORCH["工作流 / 後端控制層"]
+        N8N[n8n Workflow Engine]
+        API[Webhook / Backend API]
     end
-   
-    subgraph "雲端數據與媒體"
+
+    %% =========================
+    %% AI 服務層
+    %% =========================
+    subgraph AI["AI 與模型服務層"]
+        YOLO[YOLO 皮膚問題辨識]
+        GEMINI[Gemini LLM 分析]
+        RECO[Recommendation Logic]
+    end
+
+    %% =========================
+    %% 資料處理層
+    %% =========================
+    subgraph DATAFLOW["資料處理與 ETL 層"]
+        ETL[ETL Pipeline]
+        CLEAN[資料清洗 / 標準化]
+        TAG[成分標籤映射]
+    end
+
+    %% =========================
+    %% 儲存層
+    %% =========================
+    subgraph STORAGE["雲端資料與媒體儲存層"]
         DB[(Cloud SQL)]
         GCS[Cloud Storage]
     end
-   
-    subgraph "LINE 介面服務"
-        LMAP[LINE 訊息 API]
+
+    %% =========================
+    %% 互動流程
+    %% =========================
+    U <-->|"LIFF SDK"| LIFF
+    U <-->|"聊天 / 推播"| LINEAPI
+    LINEAPI <-->|"Messaging API"| N8N
+
+    LIFF -->|"HTTPS Webhook"| API
+    API --> N8N
+    LIFF -.->|"GA4 Event / JS"| GA4
+
+    %% =========================
+    %% AI / 資料處理流程
+    %% =========================
+    N8N -->|"呼叫影像分析"| YOLO
+    N8N -->|"呼叫文字分析"| GEMINI
+    N8N -->|"觸發推薦邏輯"| RECO
+
+    YOLO -->|"分析結果 / 圖像輸出"| GCS
+    GEMINI -->|"結構化分析結果"| DB
+    RECO <-->|"查詢產品 / 成分 / 推薦資料"| DB
+
+    %% =========================
+    %% ETL 與資料庫
+    %% =========================
+    ETL --> CLEAN
+    CLEAN --> TAG
+    TAG --> DB
+
+    DB -->|"產品資料 / 成分資料 / session 資料"| RECO
+    GCS -->|"圖片資源 / 分析圖檔"| LIFF
+
+    %% =========================
+    %% 樣式
+    %% =========================
+    style LIFF fill:#e1f5ff,stroke:#333,stroke-width:1.5px
+    style N8N fill:#fff4e1,stroke:#333,stroke-width:2px
+    style DB fill:#e8f5e9,stroke:#333,stroke-width:1.5px
+    style GCS fill:#e8f0fe,stroke:#333,stroke-width:1.5px
+    style YOLO fill:#fce4ec,stroke:#333,stroke-width:1.5px
+    style GEMINI fill:#f3e5f5,stroke:#333,stroke-width:1.5px
+    style RECO fill:#fff8e1,stroke:#333,stroke-width:1.5px
+    style ETL fill:#ede7f6,stroke:#333,stroke-width:1.5px
+
+## Data Engineering Pipeline
+## Data Engineering & Recommendation Pipeline
+
+```mermaid
+graph LR
+    subgraph INPUT["資料輸入來源"]
+        CRAWLER[品牌爬蟲 / 外部資料]
+        USER[使用者互動資料]
+        IMAGE[使用者照片]
+        GA[GA4 行為事件]
     end
-   
-    %% 連接關係與協定
-    U <-->|"LIFF 開發套件"| LIFF
-    LIFF -->|"HTTPS Webhook"| N8N
-    LIFF -.->|"JS HTTP"| GA4
-   
-    N8N <-->|"HTTP API 呼叫"| YOLO
-    YOLO -->|"gcloud SDK"| GCS
-    N8N <-->|"n8n 內建節點"| Gemini
-    N8N <-->|"資料庫連接器"| DB
-   
-    U <-->|"接收器 / 訊息介面"| LMAP
-    LMAP <-->|"API 呼叫"| N8N
-    LIFF -.->|"HTTPS / 網址"| GCS
-   
-    style LIFF fill:#e1f5ff
-    style N8N fill:#fff4e1,stroke-width:2px
+
+    subgraph ETL_LAYER["ETL 與資料轉換層"]
+        STAGE1[Stage 1 原始資料擷取]
+        STAGE2[Stage 2 成分補全]
+        STAGE3[Stage 3 成分統計 / 清洗]
+        STAGE4[Stage 4 標準化映射]
+        STAGE5[Stage 5 結構化載入]
+    end
+
+    subgraph DB_LAYER["資料儲存層"]
+        SQL[(Cloud SQL)]
+        GCS[Cloud Storage]
+    end
+
+    subgraph SERVICE["數據服務與推薦層"]
+        PROFILE[使用者膚況 / 偏好建模]
+        CANDIDATE[候選池生成]
+        RANKING[加權排序 / 回退機制]
+        SNAPSHOT[JSON Snapshot / Log]
+    end
+
+    subgraph AI_LAYER["AI 模型服務"]
+        YOLO[YOLO 影像辨識]
+        LLM[Gemini 分析服務]
+    end
+
+    subgraph APP["應用層"]
+        LIFF[LIFF Web App]
+        LINE[LINE Bot]
+    end
+
+    CRAWLER --> STAGE1
+    USER --> PROFILE
+    IMAGE --> YOLO
+    GA --> PROFILE
+
+    STAGE1 --> STAGE2 --> STAGE3 --> STAGE4 --> STAGE5
+    STAGE5 --> SQL
+
+    YOLO --> GCS
+    YOLO --> PROFILE
+    LLM --> PROFILE
+
+    SQL --> CANDIDATE
+    PROFILE --> CANDIDATE
+    CANDIDATE --> RANKING
+    RANKING --> SNAPSHOT
+    SNAPSHOT --> SQL
+
+    RANKING --> LIFF
+    RANKING --> LINE
+
+    style SQL fill:#e8f5e9,stroke:#333,stroke-width:1.5px
+    style GCS fill:#e8f0fe,stroke:#333,stroke-width:1.5px
+    style YOLO fill:#fce4ec,stroke:#333,stroke-width:1.5px
+    style LLM fill:#f3e5f5,stroke:#333,stroke-width:1.5px
+    style RANKING fill:#fff8e1,stroke:#333,stroke-width:2px
+```
+
+## Key Components
+- ETL pipeline for ingredient normalization
+- YOLO-based skin condition detection
+- Gemini LLM analysis
+- Cloud SQL recommendation service
+- GA4 user behavior tracking
 
 ---
 
