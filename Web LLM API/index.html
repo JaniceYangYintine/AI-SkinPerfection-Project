@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雙 LLM 健康建議系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        /* 連線狀態 */
+        .status-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .status-bar {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .status-bar.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .status-bar.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .status-bar.checking {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+
+        /* 表單樣式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* 雙輸出區域 */
+        .results-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .result-box {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .result-box.a-llm {
+            border-top: 5px solid #4facfe;
+        }
+
+        .result-box.c-llm {
+            border-top: 5px solid #764ba2;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .result-header h3 {
+            font-size: 1.5em;
+            margin: 0;
+        }
+
+        .result-header.a-llm h3 {
+            color: #4facfe;
+        }
+
+        .result-header.c-llm h3 {
+            color: #764ba2;
+        }
+
+        .result-content {
+            min-height: 200px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .advice-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .a-llm .advice-section {
+            border-left: 4px solid #4facfe;
+        }
+
+        .c-llm .advice-section {
+            border-left: 4px solid #764ba2;
+        }
+
+        .advice-section h4 {
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+
+        .a-llm .advice-section h4 {
+            color: #4facfe;
+        }
+
+        .c-llm .advice-section h4 {
+            color: #764ba2;
+        }
+
+        .advice-item {
+            margin: 10px 0;
+            padding: 8px 0;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        /* 通知動畫 */
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .status-container,
+            .results-container {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 頁面標題 -->
+        <div class="header">
+            <h1>💕 雙 LLM 健康建議系統</h1>
+            <p>一次獲取兩個 AI 模型的專屬建議</p>
+        </div>
+
+        <!-- 表單區域 -->
+        <div class="form-container">
+            <h2>📋 健康問卷</h2>
+
+            <!-- 連線狀態顯示 -->
+            <div class="status-container">
+                <div id="statusBarA" class="status-bar checking">
+                    🔍 正在檢測 A_LLM 連線...
+                </div>
+                <div id="statusBarC" class="status-bar checking">
+                    🔍 正在檢測 C_LLM 連線...
+                </div>
+            </div>
+
+            <form id="healthForm">
+                <div class="form-group">
+                    <label for="age">年齡</label>
+                    <input type="text" id="age" name="age" placeholder="例如：28歲" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="skin_type">膚質狀態</label>
+                    <select id="skin_type" name="skin_type" required>
+                        <option value="">請選擇</option>
+                        <option value="油性肌膚(全臉出油泛油光)">油性肌膚(全臉出油泛油光)</option>
+                        <option value="乾性肌膚(緊繃脫皮)">乾性肌膚(緊繃脫皮)</option>
+                        <option value="混合性肌膚(T字出油兩頰乾)">混合性肌膚(T字出油兩頰乾)</option>
+                        <option value="中性肌膚(水油平衡)">中性肌膚(水油平衡)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="sensitivity">敏感度</label>
+                    <select id="sensitivity" name="sensitivity" required>
+                        <option value="">請選擇</option>
+                        <option value="不太會">不太會</option>
+                        <option value="偶爾會但可接受">偶爾會但可接受</option>
+                        <option value="容易泛紅敏感">容易泛紅敏感</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="skincare_routine">保養步驟</label>
+                    <select id="skincare_routine" name="skincare_routine" required>
+                        <option value="">請選擇</option>
+                        <option value="隨性不固定">隨性不固定</option>
+                        <option value="僅早或晚單一步驟">僅早或晚單一步驟</option>
+                        <option value="早晚完整保養">早晚完整保養</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="sleep">睡眠時間</label>
+                    <select id="sleep" name="sleep" required>
+                        <option value="">請選擇</option>
+                        <option value="少於6小時">少於6小時</option>
+                        <option value="6-7小時">6-7小時</option>
+                        <option value="7-8小時">7-8小時</option>
+                        <option value="8小時以上">8小時以上</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="stress">壓力指數</label>
+                    <select id="stress" name="stress" required>
+                        <option value="">請選擇</option>
+                        <option value="幾乎沒有">幾乎沒有</option>
+                        <option value="偶爾覺得有">偶爾覺得有</option>
+                        <option value="經常覺得壓力大">經常覺得壓力大</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="exercise">運動頻率（每週）</label>
+                    <select id="exercise" name="exercise" required>
+                        <option value="">請選擇</option>
+                        <option value="0天">0天</option>
+                        <option value="1-2天">1-2天</option>
+                        <option value="3-4天">3-4天</option>
+                        <option value="5天以上">5天以上</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="fried_food">油炸食物攝取（每週）</label>
+                    <select id="fried_food" name="fried_food" required>
+                        <option value="">請選擇</option>
+                        <option value="0-1次">0-1次</option>
+                        <option value="2-3次">2-3次</option>
+                        <option value="4-5次">4-5次</option>
+                        <option value="6次以上">6次以上</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="veggies">蔬果攝取</label>
+                    <select id="veggies" name="veggies" required>
+                        <option value="">請選擇</option>
+                        <option value="很少幾乎沒有">很少幾乎沒有</option>
+                        <option value="一般少量">一般少量</option>
+                        <option value="每天都有吃">每天都有吃</option>
+                        <option value="大量攝取">大量攝取</option>
+                    </select>
+                </div>
+
+                <!-- 測試功能按鈕 -->
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <button type="button" id="quickFillBtn"
+                        style="flex: 1; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        ⚡ 快速填充 (預設值)
+                    </button>
+                    <button type="button" id="randomFillBtn"
+                        style="flex: 1; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        🎲 隨機填充
+                    </button>
+                </div>
+
+                <button type="submit" id="submitBtn">同時獲取雙 LLM 建議 ✨</button>
+            </form>
+        </div>
+
+        <!-- 雙輸出結果區域 -->
+        <div class="results-container">
+            <!-- A_LLM 輸出 -->
+            <div id="resultA" class="result-box a-llm">
+                <div class="result-header a-llm">
+                    <h3>🔵 A_LLM 建議</h3>
+                </div>
+                <div id="resultContentA" class="result-content"></div>
+            </div>
+
+            <!-- C_LLM 輸出 -->
+            <div id="resultC" class="result-box c-llm">
+                <div class="result-header c-llm">
+                    <h3>🟣 C_LLM 建議</h3>
+                </div>
+                <div id="resultContentC" class="result-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API 端點
+        const API_A_URL = 'http://localhost:5001/api/health-advice';
+        const API_A_TEST = 'http://localhost:5001/api/test';
+        const API_C_URL = 'http://localhost:5000/api/health-advice';
+        const API_C_TEST = 'http://localhost:5000/api/test';
+
+        // 檢查 A_LLM 連線狀態
+        async function checkAPIConnectionA() {
+            const statusBar = document.getElementById('statusBarA');
+            try {
+                const response = await fetch(API_A_TEST);
+                const result = await response.json();
+
+                if (result.success) {
+                    statusBar.className = 'status-bar connected';
+                    statusBar.innerHTML = '✅ A_LLM 連線成功';
+                } else {
+                    throw new Error('API 回應異常');
+                }
+            } catch (error) {
+                statusBar.className = 'status-bar disconnected';
+                statusBar.innerHTML = '❌ A_LLM 未連線';
+            }
+        }
+
+        // 檢查 C_LLM 連線狀態
+        async function checkAPIConnectionC() {
+            const statusBar = document.getElementById('statusBarC');
+            try {
+                const response = await fetch(API_C_TEST);
+                const result = await response.json();
+
+                if (result.success) {
+                    statusBar.className = 'status-bar connected';
+                    statusBar.innerHTML = '✅ C_LLM 連線成功';
+                } else {
+                    throw new Error('API 回應異常');
+                }
+            } catch (error) {
+                statusBar.className = 'status-bar disconnected';
+                statusBar.innerHTML = '❌ C_LLM 未連線';
+            }
+        }
+
+        // 預設測試數據
+        const defaultTestData = {
+            age: '25歲',
+            skin_type: '混合性肌膚(T字出油兩頰乾)',
+            sensitivity: '不太會',
+            skincare_routine: '早晚完整保養',
+            sleep: '7-8小時',
+            stress: '偶爾覺得有',
+            exercise: '3-4天',
+            fried_food: '0-1次',
+            veggies: '每天都有吃'
+        };
+
+        // 所有選項的配置
+        const fieldOptions = {
+            skin_type: ['油性肌膚(全臉出油泛油光)', '乾性肌膚(緊繃脫皮)', '混合性肌膚(T字出油兩頰乾)', '中性肌膚(水油平衡)'],
+            sensitivity: ['不太會', '偶爾會但可接受', '容易泛紅敏感'],
+            skincare_routine: ['隨性不固定', '僅早或晚單一步驟', '早晚完整保養'],
+            sleep: ['少於6小時', '6-7小時', '7-8小時', '8小時以上'],
+            stress: ['幾乎沒有', '偶爾覺得有', '經常覺得壓力大'],
+            exercise: ['0天', '1-2天', '3-4天', '5天以上'],
+            fried_food: ['0-1次', '2-3次', '4-5次', '6次以上'],
+            veggies: ['很少幾乎沒有', '一般少量', '每天都有吃', '大量攝取']
+        };
+
+        // 快速填充函數
+        function quickFill() {
+            document.getElementById('age').value = defaultTestData.age;
+            document.getElementById('skin_type').value = defaultTestData.skin_type;
+            document.getElementById('sensitivity').value = defaultTestData.sensitivity;
+            document.getElementById('skincare_routine').value = defaultTestData.skincare_routine;
+            document.getElementById('sleep').value = defaultTestData.sleep;
+            document.getElementById('stress').value = defaultTestData.stress;
+            document.getElementById('exercise').value = defaultTestData.exercise;
+            document.getElementById('fried_food').value = defaultTestData.fried_food;
+            document.getElementById('veggies').value = defaultTestData.veggies;
+
+            showNotification('✅ 已快速填充預設測試數據!', 'success');
+        }
+
+        // 隨機填充函數
+        function randomFill() {
+            const randomAge = Math.floor(Math.random() * 43) + 18;
+            document.getElementById('age').value = `${randomAge}歲`;
+
+            document.getElementById('skin_type').value = getRandomOption(fieldOptions.skin_type);
+            document.getElementById('sensitivity').value = getRandomOption(fieldOptions.sensitivity);
+            document.getElementById('skincare_routine').value = getRandomOption(fieldOptions.skincare_routine);
+            document.getElementById('sleep').value = getRandomOption(fieldOptions.sleep);
+            document.getElementById('stress').value = getRandomOption(fieldOptions.stress);
+            document.getElementById('exercise').value = getRandomOption(fieldOptions.exercise);
+            document.getElementById('fried_food').value = getRandomOption(fieldOptions.fried_food);
+            document.getElementById('veggies').value = getRandomOption(fieldOptions.veggies);
+
+            showNotification('🎲 已隨機填充測試數據!', 'info');
+        }
+
+        // 從陣列中隨機選擇
+        function getRandomOption(options) {
+            return options[Math.floor(Math.random() * options.length)];
+        }
+
+        // 顯示通知訊息
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                background: ${type === 'success' ? '#4caf50' : '#2196f3'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 10000;
+                font-weight: bold;
+                animation: slideIn 0.3s ease-out;
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // 顯示建議內容
+        function displayAdvice(adviceText, containerId) {
+            const container = document.getElementById(containerId);
+
+            const sections = adviceText.split('###').filter(s => s.trim());
+
+            let html = '';
+            sections.forEach(section => {
+                const lines = section.trim().split('\n').filter(l => l.trim());
+                if (lines.length > 0) {
+                    const title = lines[0].trim();
+                    const items = lines.slice(1).filter(l => l.trim());
+
+                    html += `<div class="advice-section">`;
+                    html += `<h4>${title}</h4>`;
+                    items.forEach(item => {
+                        if (item.trim()) {
+                            html += `<div class="advice-item">${item.trim()}</div>`;
+                        }
+                    });
+                    html += `</div>`;
+                }
+            });
+
+            container.innerHTML = html;
+        }
+
+        // 表單提交處理
+        document.getElementById('healthForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const resultA = document.getElementById('resultA');
+            const resultC = document.getElementById('resultC');
+            const resultContentA = document.getElementById('resultContentA');
+            const resultContentC = document.getElementById('resultContentC');
+
+            // 收集表單資料
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            // 顯示載入中
+            submitBtn.disabled = true;
+            submitBtn.textContent = '雙 AI 分析中... ⏳';
+            
+            resultA.classList.add('show');
+            resultC.classList.add('show');
+            resultContentA.innerHTML = '<div class="loading">A_LLM 正在生成建議...</div>';
+            resultContentC.innerHTML = '<div class="loading">C_LLM 正在生成建議...</div>';
+
+            try {
+                // 同時向兩個 API 發送請求
+                const [responseA, responseC] = await Promise.allSettled([
+                    fetch(API_A_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    }),
+                    fetch(API_C_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    })
+                ]);
+
+                // 處理 A_LLM 結果
+                if (responseA.status === 'fulfilled') {
+                    const resultDataA = await responseA.value.json();
+                    if (resultDataA.success) {
+                        displayAdvice(resultDataA.advice, 'resultContentA');
+                    } else {
+                        resultContentA.innerHTML = `<div class="error">❌ 錯誤: ${resultDataA.error}</div>`;
+                    }
+                } else {
+                    resultContentA.innerHTML = `<div class="error">❌ A_LLM 連線失敗</div>`;
+                }
+
+                // 處理 C_LLM 結果
+                if (responseC.status === 'fulfilled') {
+                    const resultDataC = await responseC.value.json();
+                    if (resultDataC.success) {
+                        displayAdvice(resultDataC.advice, 'resultContentC');
+                    } else {
+                        resultContentC.innerHTML = `<div class="error">❌ 錯誤: ${resultDataC.error}</div>`;
+                    }
+                } else {
+                    resultContentC.innerHTML = `<div class="error">❌ C_LLM 連線失敗</div>`;
+                }
+
+            } catch (error) {
+                resultContentA.innerHTML = `<div class="error">❌ 系統錯誤: ${error.message}</div>`;
+                resultContentC.innerHTML = `<div class="error">❌ 系統錯誤: ${error.message}</div>`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '同時獲取雙 LLM 建議 ✨';
+            }
+        });
+
+        // 頁面載入時檢查連線
+        window.addEventListener('load', () => {
+            checkAPIConnectionA();
+            checkAPIConnectionC();
+            
+            // 每 10 秒自動檢查一次
+            setInterval(() => {
+                checkAPIConnectionA();
+                checkAPIConnectionC();
+            }, 10000);
+
+            // 綁定測試按鈕事件
+            document.getElementById('quickFillBtn').addEventListener('click', quickFill);
+            document.getElementById('randomFillBtn').addEventListener('click', randomFill);
+        });
+    </script>
+</body>
+
+</html>
