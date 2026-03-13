@@ -1,0 +1,121 @@
+############################
+# OS / Editor
+############################
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+############################
+# Environment / Secrets
+############################
+.env
+.env.*
+!.env.example
+
+############################
+# Python
+############################
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+.envrc
+pip-wheel-metadata/
+
+############################
+# Node / Frontend (if any)
+############################
+node_modules/
+dist/
+build/
+.next/
+out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+############################
+# Data (large / generated)
+############################
+# Ignore all data by default
+data/
+
+# Allow minimal reproducible samples
+!data/samples/
+!data/samples/**/
+
+# Explicitly ignore heavy subfolders
+data/outputs/
+data/logs/
+data/raw_html/
+data/tmp/
+data/images/
+
+############################
+# Tabular data (large by default)
+############################
+*.csv
+*.parquet
+*.xlsx
+
+# Allow small sample tables
+!data/samples/**/*.csv
+!data/samples/**/*.xlsx
+!data/samples/**/*.json
+
+############################
+# Models / Weights
+############################
+models/
+models/checkpoints/
+models/weights/
+
+# Allow tiny demo models (if needed)
+!models/samples/
+!models/samples/**/
+
+############################
+# Images / Media (generated)
+############################
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.mp4
+*.mov
+
+# Allow sample images for demo / README
+!data/samples/images/
+!data/samples/images/**/*
+
+############################
+# Docker
+############################
+*.log
+docker-data/
+
+############################
+# Testing / Coverage
+############################
+.coverage
+htmlcov/
+.pytest_cache/
+
+############################
+# Misc
+############################
+*.tmp
+*.bak
+*.swp
+
+.github/
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
