@@ -1,0 +1,427 @@
+{
+  "name": "cji102_linebot",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "callback",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1024,
+        112
+      ],
+      "id": "07d2ae86-a555-4ec8-a424-7b85f6cddeda",
+      "name": "Line_Webhook",
+      "webhookId": "64288803-6fe5-4454-a3bf-48c23c38d1e5"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.line.me/v2/bot/message/reply",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\"replyToken\": \"{{ $('Line_Webhook').first().json.body.events[0].replyToken }}\",\n\"messages\": [\n    {\n      \"type\": \"flex\",\n      \"altText\": \"AI 肌膚分析報告\",\n      \"contents\": {\n  \"type\": \"bubble\",\n  \"hero\": {\n    \"type\": \"image\",\n    \"url\": \"{{ $json.data.sectionA.photoUrl }}\",\n    \"size\": \"full\",\n    \"aspectRatio\": \"1:1\",\n    \"aspectMode\": \"cover\"\n  },\n  \"body\": {\n    \"type\": \"box\",\n    \"layout\": \"vertical\",\n    \"contents\": [\n      {\n        \"type\": \"text\",\n        \"text\": \"AI 肌膚分析報告\",\n        \"weight\": \"bold\",\n        \"size\": \"xl\",\n        \"color\": \"#1E3A5F\"\n      },\n      {\n        \"type\": \"box\",\n        \"layout\": \"vertical\",\n        \"margin\": \"lg\",\n        \"spacing\": \"sm\",\n        \"contents\": [\n          {\n            \"type\": \"separator\"\n          },\n          {\n            \"type\": \"box\",\n            \"layout\": \"baseline\",\n            \"spacing\": \"sm\",\n            \"contents\": [\n              {\n                \"type\": \"text\",\n                \"text\": \"這次的氣色光芒指數是\",\n                \"wrap\": true,\n                \"color\": \"#000000\",\n                \"size\": \"md\",\n                \"margin\": \"none\",\n                \"flex\": 0\n              },\n              {\n                \"type\": \"text\",\n                \"text\": \"{{ $json.data.sectionA.score }}\",\n                \"wrap\": true,\n                \"color\": \"#D8B43F\",\n                \"size\": \"md\",\n                \"margin\": \"none\",\n                \"flex\": 0\n              },\n              {\n                \"type\": \"text\",\n                \"text\": \"分。\",\n                \"wrap\": true,\n                \"color\": \"#000000\",\n                \"size\": \"md\",\n                \"margin\": \"none\",\n                \"flex\": 0\n              }\n            ]\n          },\n          {\n            \"type\": \"box\",\n            \"layout\": \"vertical\",\n            \"spacing\": \"sm\",\n            \"contents\": [\n              {\n                \"type\": \"text\",\n                \"text\": \"🫢臉部細節上，我看到：\",\n                \"wrap\": true,\n                \"color\": \"#000000\",\n                \"size\": \"md\",\n                \"flex\": 5,\n                \"margin\": \"lg\"\n              },\n              {\n                \"type\": \"text\",\n                \"text\": \" {{ $json.data.sectionB.topIssues[0].id }},{{ $json.data.sectionB.topIssues[1].name }}\",\n                \"wrap\": true,\n                \"color\": \"#003D79\",\n                \"size\": \"sm\",\n                \"flex\": 5\n              }\n            ]\n          },\n          {\n            \"type\": \"box\",\n            \"layout\": \"vertical\",\n            \"spacing\": \"sm\",\n            \"contents\": [\n              {\n                \"type\": \"text\",\n                \"text\": \"🥗根據你的生活作息，請多補充： \",\n                \"wrap\": true,\n                \"color\": \"#000000\",\n                \"size\": \"md\",\n                \"flex\": 5,\n                \"margin\": \"lg\"\n              },\n              {\n                \"type\": \"text\",\n                \"text\": \"{{ $json.data.sectionC.suggestions[0].ingredients }},{{ $json.data.sectionC.suggestions[1].ingredients }},{{ $json.data.sectionC.suggestions[2].ingredients }}\",\n                \"wrap\": true,\n                \"color\": \"#003D79\",\n                \"size\": \"sm\",\n                \"flex\": 5\n              }\n            ]\n          },\n          {\n            \"type\": \"box\",\n            \"layout\": \"vertical\",\n            \"spacing\": \"sm\",\n            \"contents\": [\n              {\n                \"type\": \"text\",\n                \"text\": \"🧴保養上，這些成分會更有幫助： \",\n                \"wrap\": true,\n                \"color\": \"#000000\",\n                \"size\": \"md\",\n                \"flex\": 5,\n                \"margin\": \"lg\"\n              },\n              {\n                \"type\": \"text\",\n                \"text\": \"{{ $json.data.sectionD.products }}\",\n                \"wrap\": true,\n                \"color\": \"#003D79\",\n                \"size\": \"sm\",\n                \"flex\": 5\n              }\n            ]\n          },\n          {\n            \"type\": \"box\",\n            \"layout\": \"vertical\",\n            \"spacing\": \"sm\",\n            \"contents\": [\n              {\n                \"type\": \"text\",\n                \"text\": \"✨內外一起慢慢調整，膚質會變得自然又穩定。\",\n                \"wrap\": true,\n                \"color\": \"#000000\",\n                \"size\": \"md\",\n                \"flex\": 5,\n                \"margin\": \"lg\"\n              }\n            ]\n          }\n        ]\n      }\n    ],\n    \"backgroundColor\": \"#F8F8F8\"\n  }\n}\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        304,
+        0
+      ],
+      "id": "b3a71939-54e7-4095-9a9c-df3be2156c07",
+      "name": "LINE查詢",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "EN6ZUx0YWyPCE0oJ",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CALL GetSessionResult({{ $json.session_id }})",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        -144,
+        0
+      ],
+      "id": "ba7eecb7-5af4-47c3-8044-1b04c059aaa0",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "mySql": {
+          "id": "HT46NUtFLizIDG2A",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT session_id FROM sessions s\nJOIN users u ON s.user_id = u.user_id\nWHERE u.line_id = '{{ $('Line_Webhook').first().json.body.events[0].source.userId }}'\nORDER BY s.session_id DESC\nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        -592,
+        96
+      ],
+      "id": "09780bbb-1d0e-4d12-9de4-1d1b196403e4",
+      "name": "select_sessionid",
+      "executeOnce": false,
+      "alwaysOutputData": true,
+      "credentials": {
+        "mySql": {
+          "id": "HT46NUtFLizIDG2A",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6ed39e29-1a95-4bcf-a31f-ca0335e87f31",
+              "leftValue": "={{ $json.session_id }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -368,
+        96
+      ],
+      "id": "2e8f8835-ba29-410a-ab46-4bdbc984bf8b",
+      "name": "有或沒有"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.line.me/v2/bot/message/reply",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"replyToken\":\"{{ $('Line_Webhook').item.json.body.events[0].replyToken }}\",\n    \"messages\":[\n        {\n            \"type\":\"text\",\n            \"text\":\"沒有紀錄\"\n        }\n    ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -144,
+        192
+      ],
+      "id": "631c4ed9-79e3-464b-948e-94ec15d59637",
+      "name": "LINE沒有紀錄",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "EN6ZUx0YWyPCE0oJ",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.line.me/v2/bot/message/reply",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"replyToken\":\"{{ $('Line_Webhook').item.json.body.events[0].replyToken }}\",\n    \"messages\":[\n        {\n            \"type\":\"text\",\n            \"text\":\"此功能無法顯示\"\n        }\n    ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -592,
+        480
+      ],
+      "id": "ebb05901-4a1d-44b0-9201-962432c6b4a8",
+      "name": "LINE無法顯示",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "EN6ZUx0YWyPCE0oJ",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code 節點 - GET /webhook/result\n// 修正：處理 MySQL Stored Procedure 回傳的巢狀陣列\n\nconst items = $input.all();\n\n// MySQL CALL 回傳格式是 [[row], {metadata}]\n// 第一個元素是陣列，裡面才是真正的資料\nlet row = null;\n\nif (items && items.length > 0) {\n  const firstItem = items[0].json;\n  \n  // 如果是陣列（Stored Procedure 的結果）\n  if (Array.isArray(firstItem)) {\n    row = firstItem[0];\n  } else {\n    row = firstItem;\n  }\n}\n\n// 如果沒有資料\nif (!row || !row.session_id) {\n  return [{\n    json: {\n      status: \"pending\",\n      message: \"分析中，請稍候...\"\n    }\n  }];\n}\n\n// ===== 輔助函式 =====\n\nfunction parseJsonField(field) {\n  if (!field) return null;\n  if (typeof field === 'string') {\n    try {\n      return JSON.parse(field);\n    } catch (e) {\n      return null;\n    }\n  }\n  // 已經是物件或陣列，直接回傳\n  return field;\n}\n\nconst ISSUE_LABELS = {\n  'acne': '痘痘',\n  'comedone': '粉刺',\n  'darkCircle': '黑眼圈',\n  'dark_circle': '黑眼圈',\n  'spot': '斑點',\n  'wrinkle': '細紋'\n};\n\nfunction translateIssueName(englishName) {\n  if (!englishName) return '';\n  return ISSUE_LABELS[englishName] || englishName;\n}\n\n// 處理 ingredients（可能是字串陣列或物件陣列）\nfunction normalizeIngredients(ingredients) {\n  const parsed = parseJsonField(ingredients);\n  if (!parsed) return [];\n  \n  // 如果是字串陣列 [\"菸鹼醯胺\", \"甘草萃取\"]\n  if (Array.isArray(parsed) && typeof parsed[0] === 'string') {\n    return parsed.map(name => ({ name: name, description: '' }));\n  }\n  \n  // 如果已經是物件陣列 [{name: \"xxx\"}]\n  return parsed;\n}\n\n// ===== 組裝結果 =====\n\nconst result = {\n  status: \"completed\",\n  data: {\n    sectionA: {\n      photoUrl: row.original_photo_url || '',\n      score: Number(row.a_score) || 0,\n      evaluation: row.a_complexion_text || '',\n      massages: parseJsonField(row.a_massage_action) || []\n    },\n    sectionB: {\n      maskedPhotoUrl: row.analyzed_photo_url || row.original_photo_url || '',\n      scores: {\n        acne: Number(row.acne_score) || 0,\n        comedone: Number(row.comedone_score) || 0,\n        darkCircle: Number(row.dark_circle_score) || 0,\n        spot: Number(row.spot_score) || 0,\n        wrinkle: Number(row.wrinkle_score) || 0\n      },\n      topIssues: [\n        {\n          id: row.top_1_issues || '',\n          name: translateIssueName(row.top_1_issues),\n          description: row.llm_1_text || ''\n        },\n        {\n          id: row.top_2_issues || '',\n          name: translateIssueName(row.top_2_issues),\n          description: row.llm_2_text || ''\n        }\n      ].filter(issue => issue.name)\n    },\n    sectionC: {\n      suggestions: parseJsonField(row.dietary_advice) || []\n    },\n    sectionD: {\n      products: parseJsonField(row.matched_ingredients) || []\n    },\n    questionnaire: {\n      answer3_tag: row.answer3_tag || ''\n    }\n  }\n};\n\nreturn [{\n  json: result\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        0
+      ],
+      "id": "6e12d8dd-1e96-49ae-89ee-8d4a2081c569",
+      "name": "格式轉換"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "bdf50ebc-9e45-48e6-9b55-5cd15755af1f",
+                    "leftValue": "={{ $json.body.events[0].message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notExists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.events[0].message.text }}",
+                    "rightValue": "最新紀錄",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "11bed5ea-c090-4cce-adc6-dce7cbdf1213"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "cd024988-fe38-4a70-9b75-500d90280e20",
+                    "leftValue": "={{ $json.body.events[0].message.text }}",
+                    "rightValue": "開始解析",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0b307731-c11c-4889-9205-4ad040ae7fef",
+                    "leftValue": "={{ $json.body.events[0].message.text }}",
+                    "rightValue": "最新紀錄",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -832,
+        80
+      ],
+      "id": "fe5b30c3-2251-4d4a-bc2f-e150a51638e8",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.line.me/v2/bot/message/reply",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\"replyToken\": \"{{ $('Line_Webhook').first().json.body.events[0].replyToken }}\",\n\"messages\": [\n    {\n      \"type\": \"flex\",\n      \"altText\": \"開始解析\",\n      \"contents\": {\n  \"type\": \"bubble\",\n  \"footer\": {\n    \"type\": \"box\",\n    \"layout\": \"vertical\",\n    \"spacing\": \"sm\",\n    \"contents\": [\n      {\n        \"type\": \"button\",\n        \"style\": \"link\",\n        \"height\": \"sm\",\n        \"action\": {\n          \"type\": \"uri\",\n          \"label\": \"開 始 解 析\",\n          \"uri\": \"https://liff.line.me/2008825433-EiKVRQPf\"\n        },\n        \"color\": \"#D8B43F\"\n      },\n      {\n        \"type\": \"box\",\n        \"layout\": \"vertical\",\n        \"contents\": [],\n        \"margin\": \"sm\"\n      }\n    ],\n    \"flex\": 0,\n    \"backgroundColor\": \"#1E3A5F\"\n  }\n}\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -592,
+        288
+      ],
+      "id": "c4140388-8ddb-4c5a-94ff-4fe841d6d1ce",
+      "name": "LINE開始解析",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "EN6ZUx0YWyPCE0oJ",
+          "name": "Header Auth account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Line_Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "格式轉換",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "select_sessionid": {
+      "main": [
+        [
+          {
+            "node": "有或沒有",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "有或沒有": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "LINE沒有紀錄",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "格式轉換": {
+      "main": [
+        [
+          {
+            "node": "LINE查詢",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [],
+        [
+          {
+            "node": "select_sessionid",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "LINE開始解析",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "LINE無法顯示",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "553c7f03-4e48-4cbb-bab7-4638493edcd1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "689a5a3c160f0631080ab9c3059dd4a45fa07d920825ec9254f00aa604297d1c"
+  },
+  "id": "QvyW4SbpJiH8-fAwyDEc7",
+  "tags": []
+}

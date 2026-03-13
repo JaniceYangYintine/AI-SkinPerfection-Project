@@ -1,0 +1,742 @@
+{
+  "name": "cji102_chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://cji102-24-yolo-589190189996.asia-east1.run.app/predict",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "photo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b847ecd3-8eb3-4d09-b845-6dcf395adb24",
+      "name": "request(YOLO)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1424,
+        2128
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "table": {
+          "__rl": true,
+          "value": "questionnaire_answers_tags",
+          "mode": "list",
+          "cachedResultName": "questionnaire_answers_tags"
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "session_id",
+        "valueToMatchOn": "={{ $json.session_id }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "answer1_tag",
+              "value": "={{ $json.answers.answer1_tag }}"
+            },
+            {
+              "column": "answer2_tag",
+              "value": "={{ $json.answers.answer2_tag }}"
+            },
+            {
+              "column": "answer3_tag",
+              "value": "={{ $json.answers.answer3_tag }}"
+            },
+            {
+              "column": "answer4_tag",
+              "value": "={{ $json.answers.answer4_tag }}"
+            },
+            {
+              "column": "answer5_tag",
+              "value": "={{ $json.answers.answer5_tag }}"
+            },
+            {
+              "column": "answer6_tag",
+              "value": "={{ $json.answers.answer6_tag }}"
+            },
+            {
+              "column": "answer7_tag",
+              "value": "={{ $json.answers.answer7_tag }}"
+            },
+            {
+              "column": "answer8_tag",
+              "value": "={{ $json.answers.answer8_tag }}"
+            },
+            {
+              "column": "answer9_tag",
+              "value": "={{ $json.answers.answer9_tag }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        -208,
+        2272
+      ],
+      "id": "332965e0-8eee-4e83-818c-b5be471656f3",
+      "name": "questionnaire_answers_tags",
+      "credentials": {
+        "mySql": {
+          "id": "HT46NUtFLizIDG2A",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "sessions",
+          "mode": "list",
+          "cachedResultName": "sessions"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "user_id",
+              "value": "={{ $json.user_id }}"
+            },
+            {
+              "column": "original_photo_url",
+              "value": "={{ $('request(YOLO)').item.json.old_image_url }}"
+            },
+            {
+              "column": "analyzed_photo_url",
+              "value": "={{ $('request(YOLO)').item.json.new_image_url }}"
+            },
+            {
+              "column": "session_id",
+              "value": "0"
+            },
+            {
+              "column": "status",
+              "value": "analyzing"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        -944,
+        2128
+      ],
+      "id": "5e908d79-1dfa-4b48-9935-ebf196a0e062",
+      "name": "session_images",
+      "credentials": {
+        "mySql": {
+          "id": "HT46NUtFLizIDG2A",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO users (line_id)\nSELECT '{{ $json.body.line_id }}'\nFROM DUAL\nWHERE NOT EXISTS (\n    SELECT 1 FROM users WHERE line_id = '{{ $json.body.line_id }}'\n);",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        -1440,
+        1936
+      ],
+      "id": "cac3ec60-4738-40a1-b062-a71e3d797cb6",
+      "name": "line_id",
+      "credentials": {
+        "mySql": {
+          "id": "HT46NUtFLizIDG2A",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT user_id FROM users\n  WHERE line_id='{{ $('analyze').item.json.body.line_id }}';\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        -1168,
+        2128
+      ],
+      "id": "3ff76927-162d-429b-9323-5cc808e0cf0b",
+      "name": "select_userid",
+      "credentials": {
+        "mySql": {
+          "id": "HT46NUtFLizIDG2A",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT session_id FROM sessions\nORDER BY session_id DESC \nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        -720,
+        2128
+      ],
+      "id": "5f3a2d6d-9d65-4236-b807-855809f3e85a",
+      "name": "select_session_id",
+      "credentials": {
+        "mySql": {
+          "id": "HT46NUtFLizIDG2A",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "table": {
+          "__rl": true,
+          "value": "session_skin_scores",
+          "mode": "list",
+          "cachedResultName": "session_skin_scores"
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "session_id",
+        "valueToMatchOn": "={{ $json.session_id }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "acne_score",
+              "value": "={{ $('request(YOLO)').item.json.count_acne }}"
+            },
+            {
+              "column": "comedone_score",
+              "value": "={{ $('request(YOLO)').item.json.count_comedones }}"
+            },
+            {
+              "column": "wrinkle_score",
+              "value": "={{ $('request(YOLO)').item.json.Wrinkle_confidence }}"
+            },
+            {
+              "column": "spot_score",
+              "value": "={{ $('request(YOLO)').item.json.count_spots }}"
+            },
+            {
+              "column": "dark_circle_score",
+              "value": "={{ $('request(YOLO)').item.json.DarkCircle_confidence }}"
+            },
+            {
+              "column": "top_1_issues",
+              "value": "={{ $('request(YOLO)').item.json.top_1 }}"
+            },
+            {
+              "column": "top_2_issues",
+              "value": "={{ $('request(YOLO)').item.json.top_2 }}"
+            },
+            {
+              "column": "llm_1_text",
+              "value": "={{ $('request(YOLO)').item.json.top_1_text }}"
+            },
+            {
+              "column": "llm_2_text",
+              "value": "={{ $('request(YOLO)').item.json.top_2_text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        -208,
+        2480
+      ],
+      "id": "75f58997-a7fb-4db8-8739-0097472ee63e",
+      "name": "session_skin_scores",
+      "credentials": {
+        "mySql": {
+          "id": "HT46NUtFLizIDG2A",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CALL sp_recommend_funnel_full_v6({{ $('select_session_id').item.json.session_id }})",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        32,
+        2480
+      ],
+      "id": "9157f7f1-e435-408b-8cce-c19c5cb7f0e7",
+      "name": "sp_recommend_funnel_full_v6",
+      "credentials": {
+        "mySql": {
+          "id": "HT46NUtFLizIDG2A",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "analyze",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1760,
+        2128
+      ],
+      "id": "279205f8-43ed-4bd3-a658-2626e7c24d64",
+      "name": "analyze",
+      "webhookId": "64288803-6fe5-4454-a3bf-48c23c38d1e5"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE sessions\nSET status = 'completed'\nWHERE session_id = {{ $('select_session_id').item.json.session_id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        336,
+        2480
+      ],
+      "id": "6d766b3e-0e44-4d83-a23d-6cbb45e160cb",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "mySql": {
+          "id": "HT46NUtFLizIDG2A",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "result",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1696,
+        2416
+      ],
+      "id": "ac43fc64-04da-4d50-adf5-6167609e14b5",
+      "name": "result",
+      "webhookId": "f520ef68-9528-4a7d-b048-a6e70a6a16eb"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code 節點 - GET /webhook/result\n// 修正：處理 MySQL Stored Procedure 回傳的巢狀陣列\n\nconst items = $input.all();\n\n// MySQL CALL 回傳格式是 [[row], {metadata}]\n// 第一個元素是陣列，裡面才是真正的資料\nlet row = null;\n\nif (items && items.length > 0) {\n  const firstItem = items[0].json;\n  \n  // 如果是陣列（Stored Procedure 的結果）\n  if (Array.isArray(firstItem)) {\n    row = firstItem[0];\n  } else {\n    row = firstItem;\n  }\n}\n\n// 如果沒有資料\nif (!row || !row.session_id) {\n  return [{\n    json: {\n      status: \"pending\",\n      message: \"分析中，請稍候...\"\n    }\n  }];\n}\n\n// ===== 輔助函式 =====\n\nfunction parseJsonField(field) {\n  if (!field) return null;\n  if (typeof field === 'string') {\n    try {\n      return JSON.parse(field);\n    } catch (e) {\n      return null;\n    }\n  }\n  // 已經是物件或陣列，直接回傳\n  return field;\n}\n\nconst ISSUE_LABELS = {\n  'acne': '痘痘',\n  'comedone': '粉刺',\n  'darkCircle': '黑眼圈',\n  'dark_circle': '黑眼圈',\n  'spot': '斑點',\n  'wrinkle': '細紋'\n};\n\nfunction translateIssueName(englishName) {\n  if (!englishName) return '';\n  return ISSUE_LABELS[englishName] || englishName;\n}\n\n// 處理 ingredients（可能是字串陣列或物件陣列）\nfunction normalizeIngredients(ingredients) {\n  const parsed = parseJsonField(ingredients);\n  if (!parsed) return [];\n  \n  // 如果是字串陣列 [\"菸鹼醯胺\", \"甘草萃取\"]\n  if (Array.isArray(parsed) && typeof parsed[0] === 'string') {\n    return parsed.map(name => ({ name: name, description: '' }));\n  }\n  \n  // 如果已經是物件陣列 [{name: \"xxx\"}]\n  return parsed;\n}\n\n// ===== 組裝結果 =====\n\nconst result = {\n  status: \"completed\",\n  data: {\n    sectionA: {\n      photoUrl: row.original_photo_url || '',\n      score: Number(row.a_score) || 0,\n      evaluation: row.a_complexion_text || '',\n      massages: parseJsonField(row.a_massage_action) || []\n    },\n    sectionB: {\n      maskedPhotoUrl: row.analyzed_photo_url || row.original_photo_url || '',\n      scores: {\n        acne: Number(row.acne_score) || 0,\n        comedone: Number(row.comedone_score) || 0,\n        darkCircle: Number(row.dark_circle_score) || 0,\n        spot: Number(row.spot_score) || 0,\n        wrinkle: Number(row.wrinkle_score) || 0\n      },\n      topIssues: [\n        {\n          id: row.top_1_issues || '',\n          name: translateIssueName(row.top_1_issues),\n          description: row.llm_1_text || ''\n        },\n        {\n          id: row.top_2_issues || '',\n          name: translateIssueName(row.top_2_issues),\n          description: row.llm_2_text || ''\n        }\n      ].filter(issue => issue.name)\n    },\n    sectionC: {\n      suggestions: parseJsonField(row.dietary_advice) || []\n    },\n    sectionD: {\n      ingredients: normalizeIngredients(row.matched_ingredients),\n      products: parseJsonField(row.products_snapshot) || []\n    },\n    questionnaire: {\n      answer3_tag: row.answer3_tag || ''\n    }\n  }\n};\n\nreturn [{\n  json: result\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1248,
+        2416
+      ],
+      "id": "f64433d7-2ed9-48c0-9afb-42de79550654",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CALL GetSessionResult({{ Number($json.query.session_id) }})",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        -1472,
+        2416
+      ],
+      "id": "e4c4254c-5e1b-4d43-b178-e60e2a9dc818",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "mySql": {
+          "id": "HT46NUtFLizIDG2A",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -1024,
+        2416
+      ],
+      "id": "0424a82b-49d9-41e2-87b3-6998e4d81269",
+      "name": "result Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"session_id\": {{ $('select_session_id').item.json.session_id }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        608,
+        2480
+      ],
+      "id": "a9b5ea06-60cc-4503-8045-336dfb1eb5e9",
+      "name": "analyze Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a7df52fe-f522-4b92-be63-932a04a71392",
+              "name": "imageUrl",
+              "value": "={{ $('request(YOLO)').item.json.old_image_url }}",
+              "type": "string"
+            },
+            {
+              "id": "0b59e167-eaf5-43ae-b54c-4aa30c18da9b",
+              "name": "answers",
+              "value": "={{ $('analyze').item.json.body.answers }}",
+              "type": "object"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -464,
+        2064
+      ],
+      "id": "cda18d6b-ba3b-457b-956e-505d3681d731",
+      "name": "prepare_ai_input"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=你是專業的氣色分析師與營養顧問。請同時完成以下兩項任務：\n========================================\n【任務 1：氣色分析】\n========================================\n請分析這張照片，從以下 10 個固定維度評估：\n1. 面部明暗分布\n2. 面部紅潤度\n3. 神經肌肉張力\n4. 眼神聚焦感\n5. 組織水分感\n6. 面部輪廓線\n7. 眉心緊縮度\n8. 鼻翼呼吸感\n9. 頸部線條\n10. 眼神透亮度\n評分標準：\n- score：必須是 最低60分最高95分 之間的整數\n- overall_review：總字數嚴格控制在 80 字以內\n- 結構：一句整體印象 + 一個優點 + 兩個需改善點\n- 語氣簡潔專業，不囉嗦\n- 範例：\"妳的皮膚基礎非常好，膚色均勻且散發自然光澤，給人一種知性穩定的美感。目前較明顯的狀況是眼神聚焦感略顯疲憊，以及面部明暗分布受限於光源，顯得鼻翼與眼周稍有陰影，適度放鬆會更亮眼。\"\n⚠️ top_issues 選擇規則（非常重要）：\n- 必須從上述 10 個固定名稱中選擇，一字不差\n- 不可以自己創造或修改名稱（例如：不能用 \"臉部明暗\" 或 \"面部明暗感\"）\n- 項目名稱必須完全複製，包含標點符號\n- 只選擇最嚴重的 2 個問題\n- 按嚴重程度排序，最嚴重的放第一個\n========================================\n【任務 2：飲食建議】\n========================================\n根據以下使用者資料，生成 3 組精準的食材組合建議：\n【使用者問卷資料】\n年齡：{{ $json.age }}\n膚質狀態：{{ $json.skinCondition }}\n敏感度：{{ $json.sensitivity }}\n保養步驟：{{ $json.rhythm }}\n睡眠時間：{{ $json.sleepHours }}\n壓力指數：{{ $json.stress }}\n運動頻率（每週）：{{ $json.exercise }}\n油炸食物攝取（每週）：{{ $json.friedFood }}\n蔬果攝取：{{ $json.diet }}\n每組建議要求：\n- title：10 字以內，用口語化名稱（例如：「吃這些抗痘」「睡好皮膚好」「控油必吃」）\n- ingredients：2-5 種具體食材\n- content：2-3 句話，用專業但好懂的方式說明功效\n========================================\n【輸出格式】\n========================================\n⚠️ 關鍵要求（必須遵守）：\n1. 直接輸出 JSON 物件，從 { 開始，到 } 結束\n2. 不要使用 ```json 或 ``` 或任何 markdown 標記\n3. 不要有任何額外的解釋文字或符號\n4. 輸出必須是有效的 JSON 格式（可以被 JSON.parse() 解析）\n5. overall_review 必須在 80 字以內\n6. top_issues 必須完全一致於上述 10 個維度名稱\n標準格式（直接輸出這樣的結構）：\n{\"complexion\":{\"score\":80,\"overall_review\":\"整體氣色自然良好，膚質狀態佳。眼神略顯疲憊，且面部明暗分布受光線影響，建議多休息並注意照明。\",\"top_issues\":[\"面部明暗分布\",\"眼神聚焦感\"]},\"dietary\":{\"suggestions\":[{\"type\":\"food\",\"title\":\"控油必吃\",\"ingredients\":[\"鮭魚\",\"菠菜\",\"堅果\"],\"content\":\"富含 Omega-3 的食物可以調節皮脂分泌，減少油光問題。建議每週吃 2-3 次深海魚類。\"},{\"type\":\"food\",\"title\":\"美容覺時間\",\"ingredients\":[\"香蕉\",\"核桃\",\"溫牛奶\"],\"content\":\"這些食物富含色氨酸和鎂，可以幫助放鬆神經、改善睡眠品質。睡前 1 小時食用效果最好。\"},{\"type\":\"food\",\"title\":\"淡斑必備\",\"ingredients\":[\"番茄\",\"芭樂\",\"奇異果\",\"紅椒\"],\"content\":\"維他命 C 豐富的食材有助於抑制黑色素生成，建議每天攝取至少 2 種。\"}]}}\n⚠️ 最後提醒：\n- 直接輸出 JSON，不要有任何前綴或後綴\n- 不要使用程式碼區塊標記\n- 確保 JSON 格式正確\n- top_issues 的名稱必須完全一致（一字不差）",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -272,
+        1872
+      ],
+      "id": "4895b3ba-ea6c-4d7f-acd6-9696a7d2b15a",
+      "name": "AI_Combined"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 按摩動作對照表\nconst issueMapping = {\n  \"面部明暗分布\": {\n    name: \"面部明暗分布\",\n    effect: \"臉上的暗影會明顯減少,看起來比較平整、不疲累,整張臉更開闊。\",\n    gifUrl: \"https://storage.googleapis.com/skincare-app-assets/actions/1_面部明暗分布.mp4\",\n    description: \"將身體與臉部轉向主要光源,讓光線自然照在臉的正前方。\"\n  },\n  \"面部紅潤度\": {\n    name: \"面部紅潤度\",\n    effect: \"臉頰很快會出現自然的血色,看起來比較有精神、不蒼白。\",\n    gifUrl: \"https://storage.googleapis.com/skincare-app-assets/actions/2_面部紅潤度.mp4\",\n    description: \"輕輕由下往上拍打臉頰,直到感覺臉部微微溫熱即可。\"\n  },\n  \"神經肌肉張力\": {\n    name: \"神經肌肉張力\",\n    effect: \"下巴與臉部線條會放鬆,整個表情從緊繃變得比較自信、好親近。\",\n    gifUrl: \"https://storage.googleapis.com/skincare-app-assets/actions/3_神經肌肉張力.mp4\",\n    description: \"慢慢做一個大大的「一」字口型,維持 10 秒,同時深呼吸放鬆下巴。\"\n  },\n  \"眼神聚焦感\": {\n    name: \"眼神聚焦感\",\n    effect: \"眼睛不再那麼酸澀,視線更集中,看起來比較有神。\",\n    gifUrl: \"https://storage.googleapis.com/skincare-app-assets/actions/4_眼神聚焦感.mp4\",\n    description: \"讓眼睛依序往上下左右移動,接著遠望窗外約 20 秒。\"\n  },\n  \"組織水分感\": {\n    name: \"組織水分感\",\n    effect: \"臉部乾扁感會慢慢消失,膚況看起來比較飽滿、有光澤。\",\n    gifUrl: \"https://storage.googleapis.com/skincare-app-assets/actions/5_組織水分感.mp4\",\n    description: \"分幾次喝完約 200ml 的溫熱水,溫度接近體溫即可。\"\n  },\n  \"面部輪廓線\": {\n    name: \"面部輪廓線\",\n    effect: \"臉部浮腫感下降,輪廓線會變清楚,五官立體度更明顯。\",\n    gifUrl: \"https://storage.googleapis.com/skincare-app-assets/actions/6_面部輪廓線.mp4\",\n    description: \"用指關節從髮際線往後,順著頭皮輕柔按壓到後腦勺。\"\n  },\n  \"眉心緊縮度\": {\n    name: \"眉心緊縮度\",\n    effect: \"眉心不再緊皺,表情看起來比較放鬆、平靜。\",\n    gifUrl: \"https://storage.googleapis.com/skincare-app-assets/actions/7_眉心緊縮度.mp4\",\n    description: \"用食指指腹從眉心向左右眉尾平推,重複約 10 次。\"\n  },\n  \"鼻翼呼吸感\": {\n    name: \"鼻翼呼吸感\",\n    effect: \"呼吸變得更順,整個人感覺比較清醒,臉色看起來更健康。\",\n    gifUrl: \"https://storage.googleapis.com/skincare-app-assets/actions/8_鼻翼呼吸感.mp4\",\n    description: \"跟著節奏進行 4-7-8 呼吸法,專注呼吸即可。\"\n  },\n  \"頸部線條\": {\n    name: \"頸部線條\",\n    effect: \"頸部拉開後,臉部暗沈感減輕,看起來比較挺、比較亮。\",\n    gifUrl: \"https://storage.googleapis.com/skincare-app-assets/actions/9_頸部線條.mp4\",\n    description: \"雙手交叉放在胸前,頭部緩慢向後仰,停留約 10 秒。\"\n  },\n  \"眼神透亮度\": {\n    name: \"眼神透亮度\",\n    effect: \"眼睛的紅腫與疲勞感下降,眼神看起來更乾淨、有精神。\",\n    gifUrl: \"https://storage.googleapis.com/skincare-app-assets/actions/10_眼神透亮度.mp4\",\n    description: \"雙手掌心輕覆雙眼,閉眼放鬆約 1 分鐘。\"\n  }\n};\n// 取得 AI Agent 的回應\nconst input = $input.all()[0].json;\nlet aiResponse;\ntry {\n  // 嘗試從不同位置取得資料\n  aiResponse = input.output || input.text || input;\n  \n  // 如果是字串，清理 markdown 標記並解析\n  if (typeof aiResponse === 'string') {\n    aiResponse = aiResponse\n      .replace(/```json\\s*/g, '')  // 移除 ```json\n      .replace(/```\\s*/g, '')      // 移除 ```\n      .trim();\n    \n    aiResponse = JSON.parse(aiResponse);\n  }\n  \n  // 記錄解析後的資料（除錯用）\n  console.log('解析後的 AI 回應:', JSON.stringify(aiResponse).substring(0, 200));\n  \n} catch (error) {\n  // 記錄原始資料以便除錯\n  console.log('原始輸入:', JSON.stringify(input).substring(0, 500));\n  throw new Error('無法解析 AI 回應: ' + error.message);\n}\n// 驗證必要欄位\nif (!aiResponse.complexion || !aiResponse.dietary) {\n  console.log('資料結構錯誤:', JSON.stringify(aiResponse).substring(0, 500));\n  throw new Error('AI 回應缺少 complexion 或 dietary 欄位');\n}\nif (!aiResponse.complexion.score || !aiResponse.complexion.overall_review || !aiResponse.complexion.top_issues) {\n  throw new Error('complexion 資料不完整');\n}\nif (!aiResponse.dietary.suggestions) {\n  throw new Error('dietary 資料不完整');\n}\n// 組合按摩建議\nconst topIssues = aiResponse.complexion.top_issues || [];\nconst massages = topIssues.map(issue => issueMapping[issue]).filter(Boolean);\n// 回傳結果\nreturn {\n  json: {\n    sectionA: {\n      photoUrl: $('request(YOLO)').item.json.old_image_url,\n      score: aiResponse.complexion.score,\n      evaluation: aiResponse.complexion.overall_review,\n      massages: massages,\n      topIssues: topIssues\n    },\n    suggestions: aiResponse.dietary.suggestions,\n    analyzed_at: new Date().toISOString()\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        1872
+      ],
+      "id": "d4ecfa9b-f075-4423-9d39-65c635276ac7",
+      "name": "save_section_a"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "table": {
+          "__rl": true,
+          "value": "session_llm_analysis",
+          "mode": "list",
+          "cachedResultName": "session_llm_analysis"
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "session_id",
+        "valueToMatchOn": "={{ $('select_session_id').item.json.session_id }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "a_score",
+              "value": "={{ $json.sectionA.score }}"
+            },
+            {
+              "column": "a_complexion_text",
+              "value": "={{ $json.sectionA.evaluation }}"
+            },
+            {
+              "column": "a_massage_action",
+              "value": "={{ JSON.stringify($json.sectionA.massages) }}"
+            },
+            {
+              "column": "dietary_advice",
+              "value": "={{ JSON.stringify($json.suggestions) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        480,
+        1872
+      ],
+      "id": "122fe0c9-666a-4650-b5b4-7bd689e4137d",
+      "name": "session_llm_analysis1",
+      "credentials": {
+        "mySql": {
+          "id": "HT46NUtFLizIDG2A",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        2096
+      ],
+      "id": "1647ab8d-d7f8-4382-b5ab-0caa12403474",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "EMCNKPBLO63yVe1b",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "request(YOLO)": {
+      "main": [
+        [
+          {
+            "node": "select_userid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "session_images": {
+      "main": [
+        [
+          {
+            "node": "select_session_id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "select_userid": {
+      "main": [
+        [
+          {
+            "node": "session_images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "select_session_id": {
+      "main": [
+        [
+          {
+            "node": "prepare_ai_input",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "session_skin_scores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "session_skin_scores": {
+      "main": [
+        [
+          {
+            "node": "sp_recommend_funnel_full_v6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sp_recommend_funnel_full_v6": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "analyze": {
+      "main": [
+        [
+          {
+            "node": "request(YOLO)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "line_id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "analyze Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "result": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "result Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "prepare_ai_input": {
+      "main": [
+        [
+          {
+            "node": "AI_Combined",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "questionnaire_answers_tags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI_Combined": {
+      "main": [
+        [
+          {
+            "node": "save_section_a",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save_section_a": {
+      "main": [
+        [
+          {
+            "node": "session_llm_analysis1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI_Combined",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "d92c2c23-6af4-48db-96be-ea2be9e2f97b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "689a5a3c160f0631080ab9c3059dd4a45fa07d920825ec9254f00aa604297d1c"
+  },
+  "id": "ZjZfHRDOvTBkLfiP1OpYD",
+  "tags": []
+}
