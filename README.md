@@ -19,8 +19,6 @@
 
 # AI SkinPerfection
 
-# AI SkinPerfection
-
 ## System Architecture
 
 ```mermaid
@@ -79,13 +77,6 @@ graph TB
 
     DB --> RECO
     GCS_SYS --> LIFF_WEB
-
-## Key Components
-- ETL pipeline for ingredient normalization
-- YOLO-based skin condition detection
-- Gemini LLM analysis
-- Cloud SQL recommendation service
-- GA4 user behavior tracking
 
 ---
 
