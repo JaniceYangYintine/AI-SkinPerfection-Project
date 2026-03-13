@@ -1,0 +1,328 @@
+/**
+ * AI 美膚分析 - 排版與呼吸感系統
+ * ======================================================
+ * 處理文字層次、間距呼吸感、資訊分組
+ * 設計理念：讓眼睛有休息的地方，資訊容易消化
+ * 更新：2026-02-03
+ */
+
+/* ==================== 文字層次系統 ==================== */
+
+/* 超大標題 - 分數、重點數字 */
+.text-hero {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+    color: var(--disney-deep-blue);
+    letter-spacing: -0.5px;
+}
+
+/* 區塊主標題 */
+.text-section-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-snug);
+    color: var(--disney-deep-blue);
+    margin-bottom: var(--content-gap-md);
+}
+
+/* 卡片標題 */
+.text-card-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    color: var(--color-text);
+    margin-bottom: var(--content-gap-sm);
+}
+
+/* 小標題/標籤 */
+.text-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-normal);
+    color: var(--disney-deep-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--space-xs);
+}
+
+/* 主要內文 - 閱讀舒適 */
+.text-body {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text);
+}
+
+/* 次要說明文字 */
+.text-caption {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-muted);
+}
+
+/* 輔助小字 */
+.text-helper {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-light);
+}
+
+/* 強調文字 */
+.text-highlight {
+    color: var(--disney-gold);
+    font-weight: var(--font-weight-semibold);
+}
+
+.text-highlight-blue {
+    color: var(--disney-deep-blue);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* ==================== 內容區塊呼吸感 ==================== */
+
+/* 內容容器 - 統一的內部間距 */
+.content-block {
+    padding: var(--card-padding-md);
+}
+
+/* 內容群組 - 相關內容放一起 */
+.content-group {
+    margin-bottom: var(--content-gap-lg);
+}
+
+.content-group:last-child {
+    margin-bottom: 0;
+}
+
+/* 內容群組標題 */
+.content-group-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--disney-deep-blue);
+    margin-bottom: var(--content-gap-sm);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--disney-gold-border);
+}
+
+/* 內容項目 */
+.content-item {
+    padding: var(--content-gap-sm) 0;
+}
+
+.content-item + .content-item {
+    border-top: 1px solid rgba(30, 58, 95, 0.08);
+}
+
+/* ==================== 分隔線系統 ==================== */
+
+/* 輕量分隔 - 同區塊內 */
+.divider-light {
+    height: 1px;
+    background: rgba(30, 58, 95, 0.08);
+    margin: var(--content-gap-md) 0;
+}
+
+/* 中等分隔 - 不同內容群組 */
+.divider-medium {
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--disney-gold-border) 20%,
+        var(--disney-gold-border) 80%,
+        transparent 100%
+    );
+    margin: var(--content-gap-lg) 0;
+}
+
+/* 強調分隔 - 大區塊之間 */
+.divider-strong {
+    height: 2px;
+    background: var(--gradient-disney-gold);
+    margin: var(--content-gap-xl) 0;
+    border-radius: 1px;
+}
+
+/* ==================== 資料顯示優化 ==================== */
+
+/* 數值強調顯示 */
+.data-value {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    background: var(--gradient-disney-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+}
+
+.data-value-sm {
+    font-size: var(--font-size-xl);
+}
+
+.data-value-lg {
+    font-size: var(--font-size-4xl);
+}
+
+/* 數值單位 */
+.data-unit {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+    margin-left: var(--space-xs);
+}
+
+/* 數值標籤 */
+.data-label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: var(--space-xs);
+}
+
+/* ==================== 列表呼吸感 ==================== */
+
+/* 間距列表 */
+.list-spaced {
+    display: flex;
+    flex-direction: column;
+    gap: var(--content-gap-sm);
+}
+
+.list-spaced-md {
+    gap: var(--content-gap-md);
+}
+
+.list-spaced-lg {
+    gap: var(--content-gap-lg);
+}
+
+/* 列表項目 */
+.list-item {
+    padding: var(--content-gap-sm);
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-base);
+}
+
+.list-item:hover {
+    background: var(--color-bg-alt);
+}
+
+/* 帶邊框的列表項目 */
+.list-item-bordered {
+    padding: var(--content-gap-md);
+    background: var(--color-card);
+    border-left: 3px solid var(--disney-gold);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ==================== 段落呼吸感 ==================== */
+
+/* 段落容器 - 長文閱讀 */
+.prose {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-loose);
+    color: var(--color-text);
+}
+
+.prose p {
+    margin-bottom: var(--content-gap-md);
+}
+
+.prose p:last-child {
+    margin-bottom: 0;
+}
+
+.prose strong {
+    font-weight: var(--font-weight-semibold);
+    color: var(--disney-deep-blue);
+}
+
+.prose em {
+    font-style: italic;
+    color: var(--color-text-muted);
+}
+
+/* ==================== 狀態指示器 ==================== */
+
+/* 狀態點 - 好/中/差 */
+.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: var(--space-xs);
+}
+
+.status-dot-good {
+    background: var(--color-success);
+}
+
+.status-dot-warning {
+    background: var(--disney-gold);
+}
+
+.status-dot-bad {
+    background: var(--color-error);
+}
+
+/* 狀態標籤 */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+}
+
+.status-badge-good {
+    background: rgba(92, 184, 92, 0.15);
+    color: var(--color-success-text);
+}
+
+.status-badge-warning {
+    background: var(--disney-gold-bg);
+    color: var(--color-warning-text);
+}
+
+.status-badge-bad {
+    background: rgba(199, 91, 91, 0.15);
+    color: var(--color-error-text);
+}
+
+/* ==================== 響應式調整 ==================== */
+
+@media (max-width: 768px) {
+    .text-hero {
+        font-size: var(--font-size-3xl);
+    }
+
+    .text-section-title {
+        font-size: var(--font-size-lg);
+    }
+
+    .content-block {
+        padding: var(--card-padding-sm);
+    }
+
+    .prose {
+        font-size: var(--font-size-sm);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .data-value {
+        font-size: var(--font-size-2xl);
+    }
+
+    .data-value-lg {
+        font-size: var(--font-size-3xl);
+    }
+}
