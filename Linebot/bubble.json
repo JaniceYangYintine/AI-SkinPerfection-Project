@@ -1,0 +1,135 @@
+{
+  "type": "bubble",
+  "hero": {
+    "type": "image",
+    "url": "https://p3-pc-sign.douyinpic.com/tos-cn-i-0813c001/okPp1qUbAAA2A95TgEFwNxDDNfozfQ8EAACA3I~tplv-dy-aweme-images-v2:3000:3000:q75.webp?biz_tag=aweme_images&from=327834062&lk3s=138a59ce&s=PackSourceEnum_SEARCH&sc=image&se=false&x-expires=1772719200&x-signature=PgttC4P62gWHfzlKG%2ByfnGkFzbM%3D",
+    "size": "full",
+    "aspectRatio": "4:3",
+    "aspectMode": "cover"
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "lg",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "vertical",
+            "spacing": "none",
+            "contents": [
+              {
+                "type": "text",
+                "text": "A | 氣色：",
+                "size": "xl",
+                "wrap": true,
+                "margin": "none",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "此次氣色成果為：78.0分，眼神聚焦感、面部紅潤度",
+                "size": "sm",
+                "margin": "sm",
+                "wrap": true,
+                "color": "#aaaaaa"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "spacing": "none",
+            "contents": [
+              {
+                "type": "text",
+                "text": "B | 肌膚：",
+                "size": "xl",
+                "flex": 1,
+                "wrap": true,
+                "margin": "none",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "比較嚴重的症狀：黑眼圈、痘痘",
+                "size": "sm",
+                "margin": "sm",
+                "wrap": true,
+                "align": "start",
+                "color": "#aaaaaa"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "spacing": "none",
+            "contents": [
+              {
+                "type": "text",
+                "text": "C | 生活：",
+                "size": "xl",
+                "flex": 1,
+                "wrap": true,
+                "margin": "none",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "需要吃的食物：藍莓、菠菜、核桃、酪梨、鮭魚、小黃瓜、優格、地瓜、花椰菜",
+                "size": "sm",
+                "margin": "sm",
+                "wrap": true,
+                "color": "#aaaaaa"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "spacing": "none",
+            "contents": [
+              {
+                "type": "text",
+                "text": "D | 保養：",
+                "size": "xl",
+                "flex": 1,
+                "wrap": true,
+                "margin": "none",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "需要補充的營養：維生素E、菸鹼醯胺、維生素C、熊果素、穀胱甘肽、傳明酸、A醇",
+                "size": "sm",
+                "margin": "sm",
+                "wrap": true,
+                "offsetStart": "none",
+                "color": "#aaaaaa"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "spacing": "sm",
+    "contents": [
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [],
+        "margin": "sm"
+      }
+    ],
+    "flex": 0
+  }
+}
