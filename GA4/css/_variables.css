@@ -1,0 +1,191 @@
+/**
+ * AI 美膚分析 - 設計系統變數 (Single Source of Truth)
+ * ======================================================
+ * 所有 CSS 變數的唯一定義來源
+ * 風格：迪士尼城堡之夜 (優雅、奇幻、中性)
+ * 配色：深藍夜空 + 魔法金
+ * 更新：2026-02-03
+ */
+
+:root {
+    /* ==================== 主要色彩 ==================== */
+    --color-primary: #4A6FA5;
+    /* 皇家藍 - 主色調 */
+    --color-primary-dark: #3A5A8A;
+    /* 深皇家藍 - hover 狀態 */
+    --color-primary-light: #E8EEF5;
+    /* 淺藍灰 - 背景色 */
+
+    --color-secondary: #D4AF37;
+    /* 魔法金 - 輔助色/強調 */
+    --color-secondary-dark: #B8962E;
+    /* 深金色 */
+    --color-secondary-light: #FDF6E3;
+    /* 淺金色 */
+
+    --color-accent: #6BB6FF;
+    /* 星光藍 - 點綴色 */
+    --color-accent-dark: #5AA5EE;
+    /* 深星光藍 */
+
+    --color-peach: #F5E6D3;
+    /* 米白 - 裝飾 */
+    --color-lavender: #B8C5D6;
+    /* 霧藍 - 裝飾 */
+
+    /* ==================== 迪士尼城堡之夜專用 ==================== */
+    --disney-deep-blue: #1E3A5F;
+    /* 深海藍 - 主標題/強調 */
+    --disney-deep-blue-mid: #2C4A6E;
+    /* 中深藍 - 漸層中點 */
+    --disney-deep-blue-light: #3A5A7E;
+    /* 淺深藍 - 漸層結尾 */
+    --disney-gold: #D4AF37;
+    /* 魔法金 - 強調色 */
+    --disney-gold-light: #F0D875;
+    /* 淺金色 - 漸層亮點 */
+    --disney-gold-glow: rgba(212, 175, 55, 0.3);
+    /* 金色光暈 */
+    --disney-gold-bg: rgba(212, 175, 55, 0.15);
+    /* 金色背景 */
+    --disney-gold-border: rgba(212, 175, 55, 0.3);
+    /* 金色邊框 */
+
+    /* 迪士尼漸層預設 */
+    --gradient-disney-blue: linear-gradient(135deg, var(--disney-deep-blue) 0%, var(--disney-deep-blue-mid) 50%, var(--disney-deep-blue-light) 100%);
+    --gradient-disney-gold: linear-gradient(135deg, var(--disney-gold) 0%, var(--disney-gold-light) 50%, var(--disney-gold) 100%);
+
+    /* ==================== 背景色 ==================== */
+    --color-bg: #F5F7FA;
+    /* 淺灰藍 - 主背景 */
+    --color-bg-alt: #EEF1F5;
+    /* 淺灰 - 替代背景 */
+    --color-card: #FFFFFF;
+    /* 純白 - 卡片背景 */
+    --color-overlay: rgba(10, 25, 47, 0.7);
+    /* 深藍遮罩層 */
+
+    /* ==================== 文字色 ==================== */
+    --color-text: #1E3A5F;
+    /* 深海藍 - 主要文字 */
+    --color-text-muted: #5A7A9A;
+    /* 灰藍 - 次要文字 */
+    --color-text-light: #8FA4B8;
+    /* 淺灰藍 - 輔助文字 */
+    --color-text-inverse: #FFFFFF;
+    /* 反白文字 */
+
+    /* ==================== 語意色彩 ==================== */
+    --color-success: #5CB85C;
+    /* 成功 - 森林綠 */
+    --color-success-text: #1B5E20;
+    /* 成功文字 */
+    --color-warning: #D4AF37;
+    /* 警告 - 金色 */
+    --color-warning-text: #6B5A1E;
+    /* 警告文字 */
+    --color-error: #C75B5B;
+    /* 錯誤 - 磚紅 */
+    --color-error-text: #8B2E2E;
+    /* 錯誤文字 */
+    --color-info: #4A6FA5;
+    /* 資訊 - 皇家藍 */
+
+    /* ==================== 間距系統 (8px grid) ==================== */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+    --space-3xl: 64px;
+
+    /* ==================== 圓角系統 ==================== */
+    --radius-xs: 4px;
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+    --radius-full: 9999px;
+
+    /* ==================== 陰影系統 ==================== */
+    --shadow-sm: 0 2px 8px rgba(30, 58, 95, 0.08);
+    --shadow-md: 0 4px 16px rgba(30, 58, 95, 0.12);
+    --shadow-lg: 0 8px 24px rgba(30, 58, 95, 0.15);
+    --shadow-xl: 0 16px 48px rgba(30, 58, 95, 0.18);
+    --shadow-inner: inset 0 2px 4px rgba(30, 58, 95, 0.08);
+    --shadow-gold: 0 4px 16px rgba(212, 175, 55, 0.3);
+    /* 金色光暈 */
+
+    /* ==================== 字體系統 ==================== */
+    --font-family: 'Inter', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+
+    /* ==================== 字體大小 ==================== */
+    --font-size-xs: 12px;
+    --font-size-sm: 14px;
+    --font-size-base: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 20px;
+    --font-size-2xl: 24px;
+    --font-size-3xl: 28px;
+    --font-size-4xl: 32px;
+
+    /* ==================== 行高 ==================== */
+    --line-height-tight: 1.2;
+    --line-height-snug: 1.4;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.7;
+    --line-height-loose: 1.9;
+
+    /* ==================== 呼吸感間距（內容區塊專用）==================== */
+    --content-gap-sm: 12px;      /* 同區塊內小元素間距 */
+    --content-gap-md: 20px;      /* 同區塊內中等間距 */
+    --content-gap-lg: 32px;      /* 區塊與區塊之間 */
+    --content-gap-xl: 48px;      /* 大區塊分隔 */
+
+    /* 卡片內部 padding */
+    --card-padding-sm: 16px;
+    --card-padding-md: 24px;
+    --card-padding-lg: 32px;
+
+    /* ==================== 過渡動畫 ==================== */
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 300ms ease;
+    --transition-bounce: 300ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* ==================== Z-index 層級 ==================== */
+    --z-base: 1;
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-modal: 1000;
+    --z-toast: 1100;
+    --z-tooltip: 1200;
+
+    /* ==================== 觸控目標尺寸 (WCAG 2.1) ==================== */
+    --touch-target-min: 44px;
+}
+
+/* ==================== 響應式調整 ==================== */
+@media (max-width: 768px) {
+    :root {
+        --font-size-3xl: 24px;
+        --font-size-4xl: 28px;
+        --space-lg: 20px;
+        --space-xl: 28px;
+    }
+}
+
+/* ==================== 深色模式預留 ==================== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* 未來可在此定義深色模式變數 */
+    }
+}
