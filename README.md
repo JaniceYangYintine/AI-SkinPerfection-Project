@@ -22,6 +22,8 @@
 # AI SkinPerfection
 
 ## System Architecture
+
+```mermaid
 graph TB
     %% =========================
     %% 使用者層
@@ -73,9 +75,6 @@ graph TB
         GCS[Cloud Storage]
     end
 
-    %% =========================
-    %% 互動流程
-    %% =========================
     U <-->|"LIFF SDK"| LIFF
     U <-->|"聊天 / 推播"| LINEAPI
     LINEAPI <-->|"Messaging API"| N8N
@@ -84,9 +83,6 @@ graph TB
     API --> N8N
     LIFF -.->|"GA4 Event / JS"| GA4
 
-    %% =========================
-    %% AI / 資料處理流程
-    %% =========================
     N8N -->|"呼叫影像分析"| YOLO
     N8N -->|"呼叫文字分析"| GEMINI
     N8N -->|"觸發推薦邏輯"| RECO
@@ -95,9 +91,6 @@ graph TB
     GEMINI -->|"結構化分析結果"| DB
     RECO <-->|"查詢產品 / 成分 / 推薦資料"| DB
 
-    %% =========================
-    %% ETL 與資料庫
-    %% =========================
     ETL --> CLEAN
     CLEAN --> TAG
     TAG --> DB
@@ -105,20 +98,7 @@ graph TB
     DB -->|"產品資料 / 成分資料 / session 資料"| RECO
     GCS -->|"圖片資源 / 分析圖檔"| LIFF
 
-    %% =========================
-    %% 樣式
-    %% =========================
-    style LIFF fill:#e1f5ff,stroke:#333,stroke-width:1.5px
-    style N8N fill:#fff4e1,stroke:#333,stroke-width:2px
-    style DB fill:#e8f5e9,stroke:#333,stroke-width:1.5px
-    style GCS fill:#e8f0fe,stroke:#333,stroke-width:1.5px
-    style YOLO fill:#fce4ec,stroke:#333,stroke-width:1.5px
-    style GEMINI fill:#f3e5f5,stroke:#333,stroke-width:1.5px
-    style RECO fill:#fff8e1,stroke:#333,stroke-width:1.5px
-    style ETL fill:#ede7f6,stroke:#333,stroke-width:1.5px
-
-## Data Engineering Pipeline
-## Data Engineering & Recommendation Pipeline
+## ETL & Recommendation Pipeline
 
 ```mermaid
 graph LR
