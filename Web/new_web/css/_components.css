@@ -1,0 +1,1097 @@
+/**
+ * AI 美膚分析 - 元件樣式
+ * ======================================================
+ * 可重用元件：輪播、進度環、提示框等
+ * 風格：迪士尼城堡之夜 (深藍 + 金色)
+ * 更新：2026-02-03
+ */
+
+/* ==================== 迪士尼夜空背景 ==================== */
+.organic-bg {
+    position: relative;
+    background: linear-gradient(180deg,
+            var(--color-bg) 0%,
+            #E8EEF5 50%,
+            var(--color-bg) 100%);
+}
+
+/* 星星裝飾 */
+.organic-bg::before,
+.organic-bg::after {
+    content: '✦';
+    position: absolute;
+    color: var(--disney-gold-glow);
+    pointer-events: none;
+    z-index: 0;
+    animation: twinkle-bg 3s ease-in-out infinite;
+}
+
+.organic-bg::before {
+    font-size: 20px;
+    top: 15%;
+    left: 10%;
+}
+
+.organic-bg::after {
+    font-size: 14px;
+    top: 40%;
+    right: 8%;
+    animation-delay: 1s;
+}
+
+.organic-bg>* {
+    position: relative;
+    z-index: var(--z-base);
+}
+
+@keyframes twinkle-bg {
+
+    0%,
+    100% {
+        opacity: 0.2;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.1);
+    }
+}
+
+/* ==================== 通用輪播元件 ==================== */
+.carousel {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    margin: var(--space-md) calc(var(--space-md) * -1);
+    padding: 0 var(--space-md);
+    cursor: grab;
+}
+
+.carousel:active {
+    cursor: grabbing;
+}
+
+/* 隱藏滾動條 */
+.carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.carousel {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.carousel-track {
+    display: flex;
+    gap: var(--space-md);
+}
+
+.carousel-item {
+    flex: 0 0 85%;
+    scroll-snap-align: start;
+    min-width: 0;
+}
+
+/* 指示器 */
+.carousel-indicator {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+}
+
+.indicator-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-text-muted);
+    opacity: 0.3;
+    transition: all var(--transition-base);
+}
+
+.indicator-dot.active {
+    background: var(--color-primary);
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+/* 響應式 */
+@media (min-width: 768px) {
+    .carousel-item {
+        flex: 0 0 45%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .carousel-item {
+        flex: 0 0 30%;
+    }
+}
+
+/* ==================== 按摩輪播 (繼承通用輪播) ==================== */
+.massage-carousel {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    margin: var(--space-md) calc(var(--space-md) * -1);
+    padding: 0 var(--space-md);
+}
+
+.massage-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.massage-carousel {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.massage-carousel-track {
+    display: flex;
+    gap: var(--space-md);
+}
+
+.massage-item {
+    flex: 0 0 85%;
+    scroll-snap-align: start;
+    background: var(--color-bg);
+    border-radius: var(--radius-lg);
+    padding: var(--card-padding-md);
+    min-width: 0;
+    border: 1px solid rgba(30, 58, 95, 0.08);
+}
+
+.massage-item .massage-video,
+.massage-item .massage-gif {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-sm);
+    background: #f0f0f0;
+}
+
+.massage-item .massage-name {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--disney-deep-blue);
+    margin-bottom: var(--content-gap-sm);
+}
+
+.massage-item .massage-description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    margin-bottom: var(--content-gap-sm);
+    line-height: var(--line-height-relaxed);
+}
+
+.massage-item .massage-effect {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-relaxed);
+    padding-top: var(--content-gap-sm);
+    border-top: 1px solid rgba(30, 58, 95, 0.08);
+}
+
+.massage-item .massage-effect strong {
+    color: var(--disney-gold);
+    font-weight: var(--font-weight-semibold);
+}
+
+@media (min-width: 768px) {
+    .massage-item {
+        flex: 0 0 45%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .massage-item {
+        flex: 0 0 30%;
+    }
+}
+
+/* ==================== 產品輪播 ==================== */
+.products-carousel {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    margin: var(--space-md) calc(var(--space-md) * -1);
+    padding: 0 var(--space-md);
+}
+
+.products-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.products-carousel {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.products-carousel-track {
+    display: flex;
+    gap: var(--space-md);
+}
+
+.product-card {
+    flex: 0 0 85%;
+    max-width: 320px;
+    scroll-snap-align: start;
+    background: #F8F8F8;
+    /* 淡灰色背景 */
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    /* 更柔和的陰影 */
+    transition: all var(--transition-base);
+    min-width: 0;
+}
+
+.product-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.product-image {
+    width: 100%;
+    height: 220px;
+    /* 增加圖片高度 */
+    overflow: hidden;
+    background: #FFFFFF;
+    /* 圖片區域純白 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+    /* 圖片周圍留白 */
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* 改為 contain，保持產品完整 */
+}
+
+.product-info {
+    padding: var(--card-padding-md);
+    background: #F8F8F8;
+    /* 資訊區域淡灰色 */
+}
+
+.product-brand {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: var(--font-weight-medium);
+}
+
+.product-name {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--disney-deep-blue);
+    margin-bottom: var(--content-gap-sm);
+    line-height: var(--line-height-snug);
+    min-height: 48px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--content-gap-sm);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.product-category::after {
+    content: '|';
+    margin-left: var(--space-sm);
+    color: #ddd;
+}
+
+.product-ingredients {
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    margin-bottom: var(--content-gap-md);
+    padding: var(--content-gap-sm);
+    background: var(--disney-gold-bg);
+    border-radius: var(--radius-sm);
+    line-height: var(--line-height-relaxed);
+    border-left: 2px solid var(--disney-gold);
+}
+
+.product-links {
+    display: flex;
+    gap: var(--content-gap-sm);
+    padding-top: var(--content-gap-sm);
+    border-top: 1px solid rgba(30, 58, 95, 0.08);
+}
+
+.btn-link {
+    flex: 1;
+    padding: var(--space-sm);
+    min-height: var(--touch-target-min);
+    text-align: center;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+    border-radius: var(--radius-full);
+    /* 圓形按鈕 */
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-official {
+    background: #FFFFFF;
+    color: var(--color-text);
+    border: 1px solid #E0E0E0;
+}
+
+.btn-official:hover {
+    background: #F5F5F5;
+}
+
+.btn-momo {
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+}
+
+.btn-momo:hover {
+    background: var(--color-primary-dark);
+}
+
+/* 購物袋圖示樣式 */
+.btn-buy-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #A8D5A8;
+    /* 綠色圓形按鈕 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.btn-buy-icon:hover {
+    background: #8FD9B6;
+    transform: scale(1.05);
+}
+
+@media (min-width: 768px) {
+    .product-card {
+        flex: 0 0 45%;
+        max-width: 380px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .product-card {
+        flex: 0 0 30%;
+        max-width: 350px;
+    }
+}
+
+/* ==================== 圓形進度環 ==================== */
+.circular-progress {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: var(--content-gap-md) auto var(--content-gap-lg);
+}
+
+.circular-progress svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+}
+
+.progress-bg {
+    fill: none;
+    stroke: var(--color-bg);
+    stroke-width: 12;
+}
+
+.progress-bar {
+    fill: none;
+    stroke: url(#progressGradient);
+    stroke-width: 12;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.5s ease-out;
+}
+
+.progress-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.progress-content .face-illustration {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--space-sm);
+    display: block;
+}
+
+.progress-score {
+    font-size: 36px;
+    font-weight: var(--font-weight-bold);
+    background: var(--gradient-disney-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: var(--space-xs);
+}
+
+.progress-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-medium);
+}
+
+@media (max-width: 768px) {
+    .circular-progress {
+        width: 180px;
+        height: 180px;
+    }
+
+    .progress-content .face-illustration {
+        width: 70px;
+        height: 70px;
+    }
+
+    .progress-score {
+        font-size: 32px;
+    }
+}
+
+/* ==================== 臉部插圖 ==================== */
+.face-illustration {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto var(--space-lg);
+    display: block;
+    animation: fadeInScale 0.6s ease-out;
+}
+
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 768px) {
+    .face-illustration {
+        width: 100px;
+        height: 100px;
+        margin-bottom: var(--space-sm);
+    }
+}
+
+/* ==================== 溫馨提示 - 全寬黃底設計 ==================== */
+/* 使用 100vw 達到真正全寬，響應式適應各種螢幕 */
+.warm-tip {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    background: linear-gradient(135deg, #FFF9E6 0%, #FFF5DC 100%);
+    padding: var(--content-gap-md) var(--space-md);
+    margin: var(--content-gap-lg) 0;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    box-sizing: border-box;
+}
+
+.tip-icon {
+    display: none;
+}
+
+.tip-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.tip-text {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text);
+    margin: 0;
+    text-align: center;
+}
+
+.tip-text::before {
+    content: '💡 ';
+}
+
+/* ==================== 敏感度提示 - 全寬黃底設計 ==================== */
+/* 使用 100vw 達到真正全寬，響應式適應各種螢幕 */
+.sensitivity-notice {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    background: linear-gradient(135deg, #FFF9E6 0%, #FFF5DC 100%);
+    padding: var(--content-gap-md) var(--space-md);
+    margin: 0 0 var(--content-gap-lg);
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    box-sizing: border-box;
+}
+
+.notice-icon {
+    display: none;
+}
+
+.notice-content {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.notice-content h4 {
+    color: var(--disney-deep-blue);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    margin: 0 0 var(--space-xs) 0;
+}
+
+.notice-content h4::before {
+    content: '⚠️ ';
+}
+
+.notice-content p {
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    margin: 0;
+}
+
+/* ==================== 保養小提醒 ==================== */
+.skincare-routine-reminder {
+    margin-top: var(--content-gap-lg);
+    padding-top: var(--content-gap-lg);
+    border-top: 1px solid rgba(30, 58, 95, 0.08);
+    text-align: center;
+}
+
+.skincare-routine-reminder .card-title {
+    justify-content: center;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: var(--content-gap-sm);
+}
+
+.skincare-routine-reminder .card-title::before {
+    display: none;
+}
+
+.routine-image-container {
+    position: relative;
+    cursor: zoom-in;
+    margin-bottom: var(--content-gap-sm);
+}
+
+.routine-image-container:active {
+    opacity: 0.9;
+}
+
+.routine-image {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.zoom-hint {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-light);
+    margin-top: var(--space-xs);
+}
+
+.routine-tip {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-relaxed);
+    margin: 0;
+}
+
+.routine-tip::before {
+    content: '✨ ';
+}
+
+/* ==================== 圖片放大 Lightbox ==================== */
+.image-lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: var(--z-modal);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.image-lightbox.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s ease;
+}
+
+.lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.lightbox-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    touch-action: none;
+}
+
+.lightbox-image {
+    max-width: 95%;
+    max-height: 95vh;
+    object-fit: contain;
+    transform-origin: center center;
+    user-select: none;
+    -webkit-user-drag: none;
+    background: white;
+    padding: 20px;
+    box-sizing: border-box;
+    filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.7));
+    /* 移除 transition 讓縮放更流暢 */
+}
+
+.lightbox-image:active {
+    cursor: grabbing;
+}
+
+.lightbox-hint {
+    position: absolute;
+    bottom: var(--space-lg);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: var(--font-size-sm);
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    padding: var(--space-sm) var(--space-md);
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+}
+
+
+/* ==================== 推薦成分 - 膠囊標籤設計 ==================== */
+.ingredients-intro {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-relaxed);
+    margin: 0 0 var(--content-gap-md) 0;
+    padding-left: var(--space-sm);
+    border-left: 2px solid var(--disney-gold);
+}
+
+.ingredients-capsules {
+    display: flex;
+    flex-direction: column;
+    gap: var(--content-gap-sm);
+}
+
+/* ==================== 成分與商品過渡提示 ==================== */
+.products-transition {
+    text-align: center;
+    padding: var(--content-gap-lg) var(--space-md);
+    margin: var(--content-gap-md) 0;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.03) 100%);
+    border-radius: var(--radius-lg);
+    border: 1px dashed var(--disney-gold-border);
+}
+
+.transition-icon {
+    font-size: 32px;
+    margin-bottom: var(--space-sm);
+    animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+.transition-text {
+    font-size: var(--font-size-sm);
+    color: var(--disney-deep-blue);
+    line-height: var(--line-height-loose);
+    margin: 0;
+    font-weight: var(--font-weight-medium);
+}
+
+.ingredient-capsule {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: var(--content-gap-sm) 0;
+    border-bottom: 1px solid rgba(30, 58, 95, 0.06);
+    animation: fadeInUp 0.4s ease-out backwards;
+}
+
+.ingredient-capsule:last-child {
+    border-bottom: none;
+}
+
+.capsule-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--disney-gold);
+    font-size: 14px;
+}
+
+.capsule-content {
+    flex: 1;
+}
+
+.capsule-name {
+    display: block;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--disney-deep-blue);
+    margin-bottom: var(--space-xs);
+}
+
+.capsule-desc {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-relaxed);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================== C 區建議 - 簡潔列表設計 ==================== */
+.suggestions-simple-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--content-gap-lg);
+}
+
+.suggestion-simple-item {
+    padding-bottom: var(--content-gap-md);
+    border-bottom: 1px solid rgba(30, 58, 95, 0.08);
+}
+
+.suggestion-simple-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.suggestion-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--content-gap-sm);
+}
+
+.suggestion-icon-mini {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.suggestion-icon-mini .icon {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) saturate(100%) invert(73%) sepia(43%) saturate(594%) hue-rotate(10deg) brightness(92%) contrast(88%);
+}
+
+.suggestion-simple-item .suggestion-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--disney-deep-blue);
+    margin: 0;
+    line-height: var(--line-height-snug);
+}
+
+.suggestion-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-bottom: var(--content-gap-sm);
+}
+
+.suggestion-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--disney-gold-bg);
+    color: var(--disney-deep-blue);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+}
+
+.suggestion-simple-item .suggestion-text {
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    line-height: var(--line-height-loose);
+    margin: 0;
+}
+
+/* 保留舊版卡片樣式以防其他地方使用 */
+.suggestion-card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--content-gap-md);
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
+    padding: var(--card-padding-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.suggestion-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg);
+    border-radius: 50%;
+}
+
+.suggestion-icon .icon {
+    width: 24px;
+    height: 24px;
+    filter: brightness(0) saturate(100%) invert(58%) sepia(52%) saturate(632%) hue-rotate(178deg) brightness(102%) contrast(101%);
+}
+
+@media (max-width: 768px) {
+    .suggestion-card {
+        padding: var(--space-md);
+        gap: var(--space-sm);
+    }
+
+    .suggestion-icon {
+        width: 44px;
+        height: 44px;
+    }
+
+    .suggestion-icon .icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .suggestion-title {
+        font-size: var(--font-size-base);
+    }
+
+    .suggestion-text {
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* ==================== 返回頂部按鈕 ==================== */
+.back-to-top {
+    position: fixed;
+    bottom: var(--space-lg);
+    right: var(--space-lg);
+    width: 48px;
+    height: 48px;
+    min-width: var(--touch-target-min);
+    min-height: var(--touch-target-min);
+    background: linear-gradient(135deg, var(--disney-deep-blue) 0%, var(--disney-deep-blue-mid) 100%);
+    color: var(--disney-gold);
+    border: 2px solid var(--disney-gold);
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-slow);
+    z-index: var(--z-sticky);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.back-to-top:hover {
+    transform: translateY(-4px);
+    background: var(--disney-gold);
+    color: var(--disney-deep-blue);
+    box-shadow: 0 8px 24px var(--disney-gold-glow);
+}
+
+.back-to-top:active {
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .back-to-top {
+        bottom: var(--space-lg);
+        right: var(--space-lg);
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+    }
+}
+
+/* ==================== 共用動畫 ==================== */
+@keyframes slideInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================== 無障礙 - 減少動畫 ==================== */
+@media (prefers-reduced-motion: reduce) {
+
+    .organic-bg::before,
+    .organic-bg::after,
+    .face-illustration,
+    .warm-tip,
+    .suggestion-card {
+        animation: none;
+    }
+
+    .progress-bar,
+    .indicator-dot,
+    .product-card,
+    .back-to-top {
+        transition: none;
+    }
+
+    .suggestion-card:hover,
+    .back-to-top:hover {
+        transform: none;
+    }
+}
+
+/* ==================== 響應式背景調整 ==================== */
+@media (max-width: 768px) {
+    .organic-bg::before {
+        width: 180px;
+        height: 180px;
+        top: -60px;
+        left: -60px;
+    }
+
+    .organic-bg::after {
+        width: 150px;
+        height: 150px;
+        bottom: -50px;
+        right: -50px;
+    }
+
+    .warm-tip {
+        padding: 14px;
+    }
+
+    .tip-icon {
+        font-size: 20px;
+    }
+
+    .tip-text {
+        font-size: var(--font-size-xs);
+    }
+}

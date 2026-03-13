@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow">
+    <title>AI 美膚分析</title>
+    <!-- LIFF SDK -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <!-- MediaPipe Face Mesh (鎖定版本 0.4) -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4/face_mesh.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js"
+        crossorigin="anonymous"></script>
+
+    <!-- Google Fonts (preload for performance) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- 主樣式表 (統一入口) -->
+    <link rel="stylesheet" href="css/main.css?v=4">
+</head>
+
+<body>
+    <div id="app">
+
+        <!-- ==================== 相機區塊 ==================== -->
+        <section id="section-camera" class="section active" aria-label="拍照區塊">
+            <div class="camera-wrapper">
+                <!-- 相機預覽 -->
+                <div class="camera-preview" role="img" aria-label="相機預覽畫面">
+                    <video id="cameraVideo" autoplay playsinline muted aria-hidden="true"></video>
+
+                    <!-- 臉部對齊框線 -->
+                    <div class="face-guide" aria-hidden="true">
+                        <svg viewBox="0 0 200 260" class="face-oval" role="presentation">
+                            <ellipse cx="100" cy="130" rx="70" ry="95" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-dasharray="8 4" />
+                        </svg>
+                    </div>
+
+                    <!-- Canvas（用於截圖，隱藏） -->
+                    <canvas id="cameraCanvas" style="display: none;" aria-hidden="true"></canvas>
+                </div>
+
+                <!-- 提示文字 -->
+                <div id="cameraTip" class="camera-tip" role="status" aria-live="polite">
+                    請將臉部對準框線
+                </div>
+
+                <!-- 拍照按鈕 -->
+                <div class="camera-controls">
+                    <button id="captureBtn" class="capture-btn" disabled aria-label="拍攝照片">
+                        <span class="capture-btn-inner" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 問卷區塊 ==================== -->
+        <section id="section-survey" class="section" aria-label="問卷區塊">
+            <div class="survey-wrapper organic-bg">
+                <!-- 頂部：照片縮圖 -->
+                <div class="survey-header">
+                    <div class="photo-thumbnail-wrapper">
+                        <img id="photoThumbnail" class="photo-thumbnail" src="" alt="您拍攝的照片" style="display: none;">
+                        <button id="retakePhotoBtn" class="btn-retake" aria-label="重新拍攝照片">重拍</button>
+                    </div>
+                    <div class="survey-title">
+                        <h1>快速問卷</h1>
+                        <p>用來調整分析權重與建議</p>
+                    </div>
+                </div>
+
+                <!-- 問卷內容容器 -->
+                <div id="surveyContainer" class="survey-content" role="form" aria-label="膚況問卷">
+                    <!-- 由 survey.js 動態渲染 -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== Loading 區塊 ==================== -->
+        <section id="section-loading" class="section" aria-label="分析中" aria-busy="true">
+            <div class="loading-wrapper">
+                <div class="loading-spinner" role="status" aria-label="載入中">
+                    <div class="spinner" aria-hidden="true"></div>
+                </div>
+                <p id="loadingText" class="loading-text" aria-live="polite">分析中，請稍候...</p>
+                <div class="loading-progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                    aria-valuenow="0">
+                    <div id="loadingProgress" class="loading-progress-fill"></div>
+                </div>
+                <p class="loading-hint">AI 正在分析您的膚況，約需 15-20 秒</p>
+            </div>
+        </section>
+
+        <!-- ==================== 結果區塊 ==================== -->
+        <section id="section-result" class="section" aria-label="分析結果">
+            <div id="resultContainer" class="result-wrapper organic-bg">
+                <!-- 由 result.js 動態渲染 -->
+            </div>
+        </section>
+
+    </div>
+
+    <!-- 主程式 -->
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>
