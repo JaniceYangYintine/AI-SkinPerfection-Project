@@ -16,7 +16,6 @@
 | **D 區：產品推薦** | 推薦適合的保養成分與產品（開架 + 專櫃各 3 項） | Rule-based 推薦系統 + 爬蟲資料 |
 
 ---
-
 # AI SkinPerfection
 
 ## System Architecture
@@ -77,6 +76,15 @@ graph TB
 
     DB --> RECO
     GCS_SYS --> LIFF_WEB
+```
+
+## Key Components
+
+- ETL pipeline for ingredient normalization
+- YOLO-based skin condition detection
+- Gemini LLM analysis
+- Cloud SQL recommendation service
+- GA4 user behavior tracking
 
 ---
 
