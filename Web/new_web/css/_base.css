@@ -1,0 +1,277 @@
+/**
+ * AI 美膚分析 - 基礎樣式
+ * ======================================================
+ * CSS Reset、全域樣式、通用工具類別
+ * 更新：2026-02-01
+ */
+
+/* ==================== CSS Reset ==================== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+}
+
+#app {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* ==================== Section 切換 ==================== */
+.section {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.section.active {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==================== 通用按鈕系統 ==================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: 14px 28px;
+    min-height: var(--touch-target-min);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    font-family: var(--font-family);
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--transition-base);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Primary Button - 魔法金（迪士尼風格） */
+.btn-primary {
+    background: var(--gradient-disney-gold);
+    color: var(--disney-deep-blue);
+    box-shadow: 0 4px 16px var(--disney-gold-glow);
+    font-weight: var(--font-weight-bold);
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* Secondary Button - 深藍邊框 */
+.btn-secondary {
+    background: var(--color-card);
+    color: var(--disney-deep-blue);
+    border: 2px solid var(--disney-deep-blue);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--disney-deep-blue);
+    color: var(--disney-gold);
+    transform: translateY(-2px);
+}
+
+/* Accent Button - 綠色 */
+.btn-accent {
+    background: var(--color-accent);
+    color: var(--color-text);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-accent:hover:not(:disabled) {
+    background: var(--color-accent-dark);
+    transform: translateY(-2px);
+}
+
+/* ==================== 通用卡片系統 ==================== */
+.card {
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition-base);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.card-interactive {
+    cursor: pointer;
+}
+
+.card-interactive:hover {
+    transform: translateY(-2px);
+}
+
+.card-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-md);
+}
+
+.card-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-sm);
+}
+
+/* ==================== 徽章系統 ==================== */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-primary {
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+}
+
+.badge-success {
+    background: var(--color-success);
+    color: var(--color-success-text);
+}
+
+.badge-warning {
+    background: var(--color-warning);
+    color: var(--color-warning-text);
+}
+
+.badge-circle {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    background: var(--gradient-disney-gold);
+    color: var(--disney-deep-blue);
+    font-weight: var(--font-weight-bold);
+}
+
+/* ==================== 工具類別 ==================== */
+/* 文字對齊 */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+/* 字重 */
+.font-bold { font-weight: var(--font-weight-bold); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-medium { font-weight: var(--font-weight-medium); }
+
+/* 文字顏色 */
+.text-muted { color: var(--color-text-muted); }
+.text-primary { color: var(--color-primary); }
+.text-secondary { color: var(--color-secondary); }
+
+/* 間距 - margin-bottom */
+.mb-xs { margin-bottom: var(--space-xs); }
+.mb-sm { margin-bottom: var(--space-sm); }
+.mb-md { margin-bottom: var(--space-md); }
+.mb-lg { margin-bottom: var(--space-lg); }
+.mb-xl { margin-bottom: var(--space-xl); }
+
+/* 間距 - margin-top */
+.mt-xs { margin-top: var(--space-xs); }
+.mt-sm { margin-top: var(--space-sm); }
+.mt-md { margin-top: var(--space-md); }
+.mt-lg { margin-top: var(--space-lg); }
+.mt-xl { margin-top: var(--space-xl); }
+
+/* ==================== 空狀態 ==================== */
+.empty-state {
+    text-align: center;
+    padding: var(--space-2xl) var(--space-lg);
+    color: var(--color-text-muted);
+}
+
+.empty-state p {
+    font-size: var(--font-size-base);
+    margin: 0;
+}
+
+/* ==================== 響應式調整 ==================== */
+@media (max-width: 768px) {
+    .btn {
+        padding: 12px 24px;
+    }
+
+    .card {
+        padding: var(--space-md);
+    }
+}
+
+/* ==================== 無障礙 - 減少動畫 ==================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* ==================== 焦點狀態 (全域) ==================== */
+*:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* 移除預設 focus 樣式 */
+*:focus:not(:focus-visible) {
+    outline: none;
+}

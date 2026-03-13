@@ -1,0 +1,487 @@
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* ========================================
+     ☕ 星巴克風格配色系統 (Starbucks Style)
+     ======================================== */
+  /* 主色調 - 星巴克深綠 */
+  --primary: #1E3932;
+  --primary-light: #00704A;
+  --primary-dark: #14271F;
+
+  /* 點綴色 - 金銅色 */
+  --accent: #CDA96E;
+  --accent-light: #D4B683;
+  --accent-dark: #B8945A;
+
+  /* 輔助色 */
+  --secondary: #00704A;
+  --secondary-light: #2D8653;
+
+  /* 背景色系 - 暖白 */
+  --bg-primary: #F1F0EB;
+  --bg-secondary: #E8E6DF;
+  --bg-card: #FFFFFF;
+
+  /* 文字色系 */
+  --text-dark: #1E1E1E;
+  --text: #1E3932;
+  --muted: #6B635B;
+  --text-light: #9C9489;
+
+  /* 玻璃效果 */
+  --glass-bg: rgba(255, 255, 255, .92);
+  --glass-border: rgba(30, 57, 50, .08);
+
+  /* 陰影系統 - 自然溫暖 */
+  --shadow: rgba(30, 57, 50, .10);
+  --shadow-xs: 0 1px 3px rgba(30, 57, 50, .04);
+  --shadow-sm: 0 2px 8px rgba(30, 57, 50, .06);
+  --shadow-md: 0 8px 24px rgba(30, 57, 50, .10);
+  --shadow-lg: 0 16px 48px rgba(30, 57, 50, .12);
+  --shadow-xl: 0 24px 64px rgba(30, 57, 50, .15);
+
+  /* 圓角系統 */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* 字體系統 */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 20px;
+  --text-xl: 28px;
+  --text-2xl: 42px;
+
+  /* 版面 */
+  --page-max: 1040px;
+  --header-h: 76px;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--text);
+
+  /* ✅ 修正：多頁內容要能滾動 */
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  /* 專業高級灰背景 */
+  background:
+    radial-gradient(1200px 900px at 20% 18%, rgba(255, 155, 130, 0.08), transparent 60%),
+    radial-gradient(900px 700px at 80% 28%, rgba(160, 174, 192, 0.12), transparent 65%),
+    radial-gradient(900px 900px at 50% 90%, rgba(237, 242, 247, 0.95), transparent 60%),
+    linear-gradient(180deg, #F7FAFC 0%, #EDF2F7 100%);
+}
+
+/* 背景玻璃層 */
+.bg-glass {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  backdrop-filter: blur(18px) saturate(1.15);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  z-index: 0;
+}
+
+.bg-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("background.jpg") center / cover no-repeat;
+  /* 放置背景圖片 */
+  opacity: .25;
+  /* 背景圖透明度 */
+  filter: blur(0px);
+  /* 想柔一點可改 blur(2px) */
+}
+
+.bg-glass::after {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background-image: radial-gradient(rgba(0, 0, 0, .08) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: .08;
+  transform: rotate(-6deg);
+}
+
+/* =========================
+   Apple Glass Background
+   ========================= */
+
+.bg-glass {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 背景圖片層（清楚但降存在感） */
+.bg-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("background.jpg") center / cover no-repeat;
+  /* filter: saturate(1.05) contrast(1.02); */
+  filter: blur(1px) saturate(1.05);
+  opacity: 0.45;
+}
+
+/* 玻璃霧化層（Apple 核心） */
+.bg-glass::after {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  /* 擴大避免邊緣破圖 */
+
+  /* Apple Glass 關鍵 */
+  backdrop-filter: blur(22px) saturate(1.2);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+
+  /* 微亮霧感 */
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, .35),
+      rgba(255, 255, 255, .15));
+
+  /* 細微顆粒，避免「塑膠感」 */
+  background-image:
+    radial-gradient(rgba(0, 0, 0, .08) 1px, transparent 1px);
+  background-size: 24px 24px;
+
+  opacity: 1;
+}
+
+
+/* ✅ header 改成「固定但不撐爆」：限制寬度＋置中 */
+header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(var(--page-max), calc(100% - 32px));
+  padding: calc(14px + var(--safe-top)) 18px 12px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  box-sizing: border-box;
+
+  /* ✅ 更像正式產品：header 也玻璃化 */
+  background: rgba(255, 255, 255, .35);
+  border: 1px solid rgba(0, 0, 0, .06);
+  border-radius: 18px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, .10);
+}
+
+.brand {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  box-shadow: 0 10px 30px var(--shadow);
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 15px;
+  letter-spacing: 1px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.brand p {
+  margin: 2px 0 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: .4px;
+}
+
+/* ✅ stage 改成可滾動頁面容器：不再用 height:100% 置中鎖死 */
+.stage {
+  position: relative;
+  z-index: 1;
+
+  /* ✅ 調整：已改用浮動按鈕,不需要避開大型 header */
+  padding: calc(24px + var(--safe-top)) 16px calc(24px + var(--safe-bottom)) 16px;
+
+  box-sizing: border-box;
+
+  /* ✅ 內容居中，但高度自適應 */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  min-height: 100vh;
+}
+
+/* ✅ 卡片一定要有 max-width，不然會被拉爆 */
+.card {
+  width: min(980px, 100%);
+  max-width: var(--page-max);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  box-shadow:
+    0 20px 70px rgba(0, 0, 0, .18),
+    0 0 0 1px rgba(255, 255, 255, .35) inset;
+  /* 🎨 新增：內光效果增強層次 */
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  overflow: hidden;
+}
+
+/* 手機版:卡片填滿寬度 */
+@media (max-width: 768px) {
+  .card {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 16px;
+  }
+}
+
+.card-head {
+  padding: 16px 16px 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.title {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: 1px;
+  font-weight: 900;
+  color: var(--text-dark);
+}
+
+.sub {
+  margin: 6px 0 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: .4px;
+}
+
+.body {
+  padding: 0 16px 16px 16px;
+}
+
+/* 按鈕 */
+.btn {
+  position: relative;
+  /* 🎨 新增：支援漣漪效果 */
+  overflow: hidden;
+  /* 🎨 新增：隱藏溢出的漣漪 */
+  border: 1px solid rgba(0, 0, 0, .10);
+  background: rgba(255, 255, 255, .60);
+  color: rgba(22, 22, 26, .88);
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 13px;
+  letter-spacing: .4px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  /* 🎨 改善：更流暢的過渡 */
+  white-space: nowrap;
+  /* ✅ 避免按鈕換行撐爆 header */
+}
+
+/* 🎨 新增：按鈕漣漪效果 */
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .4);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn:hover {
+  filter: brightness(1.05);
+  /* 🎨 提升：1.03 → 1.05 更明顯 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+  /* 🎨 新增：hover 陰影 */
+}
+
+.btn:active {
+  transform: scale(.97);
+  /* 🎨 改善：.98 → .97 更明顯的按下感 */
+}
+
+/* 🎨 新增：禁用狀態 */
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  filter: grayscale(0.3);
+}
+
+.btn:disabled::before {
+  display: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  border: 1px solid rgba(0, 0, 0, .08);
+  color: white;
+  font-weight: 900;
+  box-shadow: 0 4px 12px rgba(255, 155, 130, 0.25);
+}
+
+.btn-lg {
+  padding: 14px 90px;
+  font-size: 24px;
+  border-radius: 200px;
+}
+
+/* 版面 */
+.row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.kpi {
+  flex: 1 1 220px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .55);
+  border: 1px solid rgba(0, 0, 0, .08);
+}
+
+/* ✅ Canvas / 圖表區域：不跑版 */
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+.big {
+  font-size: 34px;
+  font-weight: 950;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .62);
+  border: 1px solid rgba(0, 0, 0, .10);
+  color: rgba(22, 22, 26, .90);
+  outline: none;
+}
+
+.input::placeholder {
+  color: rgba(22, 22, 26, .42);
+}
+
+/* 🎨 Toast 通知改善 */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(16px + var(--safe-bottom));
+  transform: translateX(-50%) translateY(0);
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, .78);
+  backdrop-filter: blur(10px);
+  /* 🎨 新增：背景模糊效果 */
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, .18);
+  color: rgba(255, 255, 255, .92);
+  font-size: 13px;
+  letter-spacing: .3px;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, .35);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* 🎨 改善：更流暢的過渡 */
+  z-index: 60;
+  max-width: min(92vw, 540px);
+  text-align: center;
+}
+
+.toast.show {
+  opacity: 1;
+  animation: toastSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* 🎨 新增：滑入動畫 */
+}
+
+/* 🎨 新增：Toast 滑入動畫 */
+@keyframes toastSlideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* 🎨 新增：錯誤提示變體 */
+.toast.error {
+  background: rgba(239, 68, 68, 0.9);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* 🎨 新增：成功提示變體 */
+.toast.success {
+  background: rgba(16, 185, 129, 0.9);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ✅ 手機：header 變直向更穩 */
+@media (max-width: 720px) {
+  header {
+    width: calc(100% - 24px);
+    padding: calc(12px + var(--safe-top)) 14px 10px 14px;
+    border-radius: 16px;
+  }
+
+  .stage {
+    padding-top: calc(var(--header-h) + var(--safe-top) + 12px);
+  }
+
+  .btn-lg {
+    padding: 14px 48px;
+    font-size: 20px;
+  }
+}

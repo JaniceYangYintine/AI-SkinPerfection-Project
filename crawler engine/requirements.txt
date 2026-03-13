@@ -1,0 +1,12 @@
+# git status 看工作樹狀態
+
+# git add .：將目前目錄（含子目錄）下所有已修改/新增/刪除且未被 .gitignore 忽略的檔案，全部加進暫存區。
+# git add <檔案路徑>：只加入指定檔案。可以重複多次或用空白分隔多個檔案，例如 git add main.py fetch.py。
+
+# git commit -m "描述你的修改"
+
+# git pull origin <分支> --rebase：抓遠端更新並 rebase。若沒有衝突就直接完成。
+    # 若出現衝突，Git 會暫停在衝突檔案；你手動解決衝突後，對每個已解決檔案 git add <檔案>，
+    # 然後 git rebase --continue 繼續。推送到 GitHub：git push origin <分支>。
+
+# git push origin <分支>

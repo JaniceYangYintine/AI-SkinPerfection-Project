@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>測試點擊功能</title>
+    <style>
+        .test-card {
+            padding: 20px;
+            margin: 20px;
+            background: #f0f0f0;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+
+        .test-card:hover {
+            background: #e0e0e0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>測試點擊功能</h1>
+
+    <div class="test-card" onclick="testClick('A')">
+        點擊測試 A
+    </div>
+
+    <div class="test-card" onclick="testClick('B')">
+        點擊測試 B
+    </div>
+
+    <div id="result"></div>
+
+    <script type="module">
+        // 在 module 中定義函數
+        function testClick(name) {
+            document.getElementById('result').innerHTML = `你點擊了: ${name}`;
+            console.log('Clicked:', name);
+        }
+
+        // 綁定到 window
+        window.testClick = testClick;
+        console.log('testClick 已綁定到 window:', typeof window.testClick);
+    </script>
+</body>
+
+</html>

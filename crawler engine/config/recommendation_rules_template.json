@@ -1,0 +1,37 @@
+﻿{
+  "version": "v1",
+  "notes": "Fill rules to map questionnaire answers to product tags.",
+  "rules": {
+    "must_have": [
+      {
+        "id": "must_example",
+        "when": {"question_id": "skin_condition_after_cleanse", "in": ["oily"]},
+        "require_any": [
+          {"field": "concerns_mapped", "tags": ["出油", "毛孔"]}
+        ]
+      }
+    ],
+    "avoid": [
+      {
+        "id": "avoid_example",
+        "when": {"question_id": "sensitivity", "in": ["high"]},
+        "exclude_any": [
+          {"field": "ingredients_mapped", "tags": ["酒精", "香精"]}
+        ]
+      }
+    ],
+    "bonus": [
+      {
+        "id": "bonus_example",
+        "when": {"question_id": "skin_condition_after_cleanse", "in": ["oily"]},
+        "add_score": 2,
+        "match_any": [
+          {"field": "effects_mapped", "tags": ["控油", "收斂"]}
+        ]
+      }
+    ]
+  },
+  "output": {
+    "top_n": 5
+  }
+}

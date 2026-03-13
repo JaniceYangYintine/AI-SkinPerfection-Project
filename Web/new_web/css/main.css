@@ -1,0 +1,21 @@
+/**
+ * AI 美膚分析 - 主樣式入口
+ * ======================================================
+ * 單一入口檔案，統一管理所有樣式載入
+ * 更新：2026-02-01
+ *
+ * 載入順序:
+ * 1. _variables.css - 設計系統變數 (Single Source of Truth)
+ * 2. _base.css      - CSS Reset、全域樣式、工具類別
+ * 3. _components.css - 可重用元件樣式
+ * 4. _pages.css     - 頁面特定樣式
+ */
+
+@import url('./_variables.css?v=32');
+@import url('./_base.css?v=32');
+@import url('./_typography.css?v=32');
+/* 排版與呼吸感系統 */
+@import url('./_components.css?v=32');
+@import url('./_pages.css?v=32');
+@import url('./_responsive-fix.css?v=32');
+/* 響應式修正 - 防止手機左右晃動 */

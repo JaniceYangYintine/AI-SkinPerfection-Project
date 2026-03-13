@@ -1,0 +1,217 @@
+/**
+ * A 區行動推薦樣式
+ */
+
+.section-a-recommendations {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* 標題區 */
+.recommendations-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.recommendations-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+}
+
+/* 總評文字 */
+.summary-text {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  line-height: 1.8;
+  color: #34495e;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* 偵測問題區 */
+.detected-issues {
+  margin-bottom: 2rem;
+}
+
+.detected-issues h3 {
+  font-size: 1.3rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.issues-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.issue-tag {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.issue-tag:hover {
+  transform: translateY(-2px);
+}
+
+/* 行動卡片容器 */
+.action-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* 單個行動卡片 */
+.action-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.5s ease;
+}
+
+.action-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 卡片標題 */
+.card-header {
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.issue-badge {
+  display: inline-block;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* 媒體區域 */
+.card-media {
+  position: relative;
+  width: 100%;
+  background: #f8f9fa;
+  overflow: hidden;
+}
+
+.action-media {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  max-height: 300px;
+}
+
+.action-media video {
+  cursor: pointer;
+}
+
+/* 卡片內容 */
+.card-content {
+  padding: 1.5rem;
+}
+
+.action-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 0.8rem 0;
+}
+
+.action-description {
+  color: #34495e;
+  line-height: 1.7;
+  margin: 0 0 1.5rem 0;
+  font-size: 0.95rem;
+}
+
+/* 效果區域 */
+.effect-section {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  padding: 1rem;
+  border-radius: 10px;
+  margin-top: 1rem;
+}
+
+.effect-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #d35400;
+  margin: 0 0 0.5rem 0;
+}
+
+.effect-description {
+  color: #7f4f24;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .section-a-recommendations {
+    padding: 1.5rem;
+  }
+
+  .recommendations-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .action-cards {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .issues-list {
+    gap: 0.5rem;
+  }
+
+  .issue-tag {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-a-recommendations {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .recommendations-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .card-content {
+    padding: 1rem;
+  }
+}

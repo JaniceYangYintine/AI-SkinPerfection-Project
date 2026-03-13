@@ -1,0 +1,335 @@
+﻿{
+  "schema_version": "2.0.0",
+  "questionnaire_id": "skin_vitality_v2",
+  "locale": "zh-TW",
+  "ui": {
+    "title": "肌膚活力問卷 v2，約 45 秒",
+    "description": "用於個人化保養建議，包含敏弱/雷射後適用。"
+  },
+
+  "answers_contract": {
+    "user_id": "string",
+    "analysis_id": "string",
+    "submitted_at": "iso8601",
+    "answers": "object",
+    "derived": {
+      "tags": "object",
+      "gates": "object",
+      "overrides": "object",
+      "scores": "object"
+    }
+  },
+
+  "questions": [
+    {
+      "id": "age_band",
+      "type": "single",
+      "required": true,
+      "title": "您的年齡區間？",
+      "options": [
+        { "value": "u20", "label": "20 歲以下" },
+        { "value": "20_30", "label": "20 - 30 歲" },
+        { "value": "30_40", "label": "30 - 40 歲" },
+        { "value": "40p", "label": "40 歲以上" }
+      ],
+      "derive": { "tags": { "age_band": "value" } }
+    },
+    {
+      "id": "skin_condition_after_cleanse",
+      "type": "single",
+      "required": true,
+      "title": "清潔肌膚後，沒有塗抹任何保養品的大約 30 分鐘後，膚況是？",
+      "options": [
+        { "value": "dry", "label": "乾性肌膚－全臉感到乾燥，甚至緊繃脫皮" },
+        { "value": "oily", "label": "油性肌膚－全臉出油旺盛，肌膚泛油光" },
+        { "value": "combo", "label": "混合性肌膚－T 字部位出油旺盛，兩頰舒適或乾燥" },
+        { "value": "normal", "label": "中性肌膚－全臉舒適，不會乾燥也不會油膩" }
+      ],
+      "derive": { "tags": { "skin_condition_after_cleanse": "value" } }
+    },
+    {
+      "id": "sensitivity",
+      "type": "single",
+      "required": true,
+      "title": "您對外界刺激或新產品的敏感程度？",
+      "options": [
+        { "value": "high", "label": "容易泛紅/敏感" },
+        { "value": "low", "label": "偶爾會但可接受" },
+        { "value": "robust", "label": "幾乎沒有問題" }
+      ],
+      "derive": { "tags": { "sensitivity": "value" } }
+    },
+    {
+      "id": "routine_preference",
+      "type": "single",
+      "required": true,
+      "title": "您更偏好哪種保養節奏？",
+      "options": [
+        { "value": "full_twice", "label": "早晚完整一套" },
+        { "value": "single_once", "label": "僅早或晚單一步驟" },
+        { "value": "casual", "label": "隨性不固定" }
+      ],
+      "derive": { "tags": { "routine_preference": "value" } }
+    },
+    {
+      "id": "sleep_hours_avg",
+      "type": "single",
+      "required": true,
+      "title": "最近一週的平均睡眠時數？",
+      "options": [
+        { "value": "lt6", "label": "少於 6 小時" },
+        { "value": "6_7", "label": "6-7 小時" },
+        { "value": "7_8", "label": "7-8 小時" },
+        { "value": "gt8", "label": "超過 8 小時" }
+      ],
+      "derive": {
+        "tags": { "sleep_hours_avg": "value" },
+        "scores": { "sleep": { "lt6": 0, "6_7": 1, "7_8": 2, "gt8": 2 } }
+      }
+    },
+    {
+      "id": "stress_level",
+      "type": "single",
+      "required": true,
+      "title": "最近覺得壓力大嗎？",
+      "options": [
+        { "value": "low", "label": "幾乎沒有" },
+        { "value": "med", "label": "偶爾覺得有" },
+        { "value": "high", "label": "經常覺得壓力大" }
+      ],
+      "derive": {
+        "tags": { "stress_level": "value" },
+        "scores": { "stress": { "low": 0, "med": 1, "high": 2 } }
+      }
+    },
+    {
+      "id": "exercise_days_30min_per_week",
+      "type": "single",
+      "required": true,
+      "title": "一週大約幾天有運動超過 30 分鐘？",
+      "options": [
+        { "value": "0", "label": "0 天" },
+        { "value": "1-2", "label": "1-2 天" },
+        { "value": "3-4", "label": "3-4 天" },
+        { "value": "5-7", "label": "5-7 天" }
+      ],
+      "derive": {
+        "tags": { "exercise_days_30min_per_week": "value" },
+        "scores": { "activity": { "0": 0, "1-2": 1, "3-4": 2, "5-7": 3 } }
+      }
+    },
+    {
+      "id": "greasy_food_freq_per_week",
+      "type": "single",
+      "required": false,
+      "title": "一週油炸/重油食物的頻率？",
+      "options": [
+        { "value": "0-1", "label": "0-1 次" },
+        { "value": "2-3", "label": "2-3 次" },
+        { "value": "4-5", "label": "4-5 次" },
+        { "value": "6+", "label": "6 次以上" }
+      ],
+      "derive": {
+        "tags": { "greasy_food_freq_per_week": "value" },
+        "scores": { "diet_oily": { "0-1": 0, "2-3": 1, "4-5": 2, "6+": 3 } }
+      }
+    },
+    {
+      "id": "fruits_veggies_daily",
+      "type": "single",
+      "required": false,
+      "title": "您每天蔬果攝取量？",
+      "options": [
+        { "value": "high", "label": "很多/均衡" },
+        { "value": "medium", "label": "一般/少量" },
+        { "value": "low", "label": "很少/幾乎沒有" }
+      ],
+      "derive": {
+        "tags": { "fruits_veggies_daily": "value" },
+        "scores": { "diet_veggie": { "high": 2, "medium": 1, "low": 0 } }
+      }
+    }
+  ],
+
+  "logic": {
+    "gates": [
+      {
+        "id": "gate_low_tolerance_active_block",
+        "when_all": [
+          { "path": "answers.product_reaction_history", "in": ["severe"] }
+        ],
+        "effects": {
+          "d_zone": {
+            "set_default_strategy": "barrier_first",
+            "force_messages": [
+              "你曾出現明顯不適，建議以屏障修復/舒緩為主；強刺激成分需降低或暫緩。"
+            ]
+          }
+        }
+      },
+      {
+        "id": "gate_high_fatigue_caution",
+        "when_all": [
+          { "path": "computed.fatigue_index", "gte": 3 }
+        ],
+        "effects": {
+          "c_zone": {
+            "force_messages": [
+              "你的睡眠/壓力分數偏高，建議先調整作息與舒緩，避免同時嘗試太多新步驟。"
+            ]
+          },
+          "d_zone": {
+            "avoid_new_strong_actives": true
+          }
+        }
+      },
+      {
+        "id": "gate_oil_diet_focus",
+        "when_all": [
+          { "path": "answers.skin_condition_after_cleanse", "in": ["oily", "combo"] },
+          { "path": "answers.diet_oily", "gte": 2 }
+        ],
+        "effects": {
+          "d_zone": {
+            "force_messages": [
+              "目前膚況偏油且重油飲食較高，建議油水平衡、減少致粉刺成分並調整飲食。"
+            ]
+          }
+        }
+      }
+    ],
+
+    "override_rules": [],
+
+    "scoring_model": {
+      "score_keys": [
+        "tolerance",
+        "sleep",
+        "stress",
+        "activity",
+        "diet_oily",
+        "diet_veggie"
+      ],
+      "derived_metrics": [
+        {
+          "id": "fatigue_index",
+          "formula": "stress + max(0, 2 - sleep)",
+          "range": [0, 4]
+        }
+      ],
+      "recommendation_weights": {
+        "c_zone": {
+          "sleep": { "metric": "fatigue_index", "weight": 2 },
+          "activity": { "score": "activity", "weight": 1 },
+          "diet": { "score": "diet_oily", "weight": 1 },
+          "veggies": { "score": "diet_veggie", "weight": 1 }
+        },
+        "d_zone": {
+          "barrier": {
+            "boost_if": [
+              { "path": "answers.sensitivity", "in": ["high"] },
+              { "path": "answers.product_reaction_history", "in": ["mild", "severe"] }
+            ]
+          },
+          "oil_control": {
+            "boost_if": [
+              { "path": "answers.skin_condition_after_cleanse", "in": ["oily", "combo"] },
+              { "path": "answers.diet_oily", "gte": 2 }
+            ],
+            "gate_ref": ["gate_oil_diet_focus"]
+          }
+        }
+      }
+    }
+  },
+
+  "output_contract_examples": [
+    {
+      "answers": {
+        "age_band": "20_30",
+        "skin_condition_after_cleanse": "combo",
+        "sensitivity": "high",
+        "product_reaction_history": "mild",
+        "routine_preference": "single_once",
+        "sleep_hours_avg": "6_7",
+        "stress_level": "med",
+        "exercise_days_30min_per_week": "3-4",
+        "greasy_food_freq_per_week": "2-3",
+        "fruits_veggies_daily": "medium"
+      },
+      "derived": {
+        "tags": {
+          "age_band": "20_30",
+          "skin_condition_after_cleanse": "combo",
+          "sensitivity": "high",
+          "product_reaction_history": "mild",
+          "routine_preference": "single_once",
+          "sleep_hours_avg": "6_7",
+          "stress_level": "med",
+          "exercise_days_30min_per_week": "3-4",
+          "greasy_food_freq_per_week": "2-3",
+          "fruits_veggies_daily": "medium"
+        },
+        "gates": {
+          "gate_low_tolerance_active_block": false,
+          "gate_high_fatigue_caution": false,
+          "gate_oil_diet_focus": false
+        },
+        "overrides": {},
+        "scores": {
+          "tolerance": 1,
+          "sleep": 1,
+          "stress": 1,
+          "activity": 2,
+          "diet_oily": 1,
+          "diet_veggie": 1,
+          "fatigue_index": 2
+        }
+      }
+    },
+    {
+      "answers": {
+        "age_band": "30_40",
+        "skin_condition_after_cleanse": "oily",
+        "sensitivity": "low",
+        "product_reaction_history": "severe",
+        "routine_preference": "casual",
+        "sleep_hours_avg": "lt6",
+        "stress_level": "high",
+        "exercise_days_30min_per_week": "0",
+        "greasy_food_freq_per_week": "6+",
+        "fruits_veggies_daily": "low"
+      },
+      "derived": {
+        "tags": {
+          "age_band": "30_40",
+          "skin_condition_after_cleanse": "oily",
+          "sensitivity": "low",
+          "product_reaction_history": "severe",
+          "routine_preference": "casual",
+          "sleep_hours_avg": "lt6",
+          "stress_level": "high",
+          "exercise_days_30min_per_week": "0",
+          "greasy_food_freq_per_week": "6+",
+          "fruits_veggies_daily": "low"
+        },
+        "gates": {
+          "gate_low_tolerance_active_block": true,
+          "gate_high_fatigue_caution": true,
+          "gate_oil_diet_focus": true
+        },
+        "overrides": {},
+        "scores": {
+          "tolerance": 0,
+          "sleep": 0,
+          "stress": 2,
+          "activity": 0,
+          "diet_oily": 3,
+          "diet_veggie": 0,
+          "fatigue_index": 4
+        }
+      }
+    }
+  ]
+}
+

@@ -1,0 +1,312 @@
+/**
+ * 響應式修正 - 防止手機左右晃動
+ * ======================================================
+ * 這個檔案修正所有可能導致手機橫向滾動的問題
+ * 更新：2026-02-03
+ */
+
+/* ==================== 核心修正 ==================== */
+
+/* 確保所有元素不超出螢幕寬度 */
+/* 排除 SVG 和 icon，避免影響圖標尺寸 */
+*:not(svg):not(svg *) {
+    max-width: 100%;
+}
+
+/* 防止 body 和 html 橫向滾動 */
+html,
+body {
+    width: 100%;
+    overflow-x: hidden !important;
+    position: relative;
+}
+
+/* 確保主容器不超出螢幕 */
+#app {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden !important;
+}
+
+/* 所有 section 也不能超出 */
+.section {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+/* ==================== 容器修正 ==================== */
+
+/* 確保所有容器都有適當的 padding */
+.container,
+.content-wrapper,
+.page-container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: var(--space-md, 16px);
+    padding-right: var(--space-md, 16px);
+    box-sizing: border-box;
+}
+
+/* ==================== 圖片和媒體修正 ==================== */
+
+/* 所有圖片都不能超出容器 */
+img,
+video,
+canvas {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ==================== Flexbox 修正 ==================== */
+
+/* 防止 flex 容器超出螢幕 */
+.flex,
+[class*="flex-"],
+.massage-list,
+.product-list,
+.suggestion-list {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* 防止 flex items 超出 */
+.flex > *,
+[class*="flex-"] > * {
+    min-width: 0; /* 允許 flex items 縮小 */
+    flex-shrink: 1;
+}
+
+/* ==================== Grid 修正 ==================== */
+
+/* 確保 grid 不超出螢幕 */
+.grid,
+[class*="grid-"] {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* ==================== 文字修正 ==================== */
+
+/* 防止長文字超出 */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+span,
+div {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+/* 防止長 URL 或程式碼超出 */
+pre,
+code {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* ==================== 卡片修正 ==================== */
+
+/* 確保卡片不超出螢幕 */
+.card,
+.massage-item,
+.product-card,
+.suggestion-card {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* ==================== 按鈕修正 ==================== */
+
+/* 確保按鈕不超出螢幕 */
+.btn,
+button {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* ==================== 特定元件修正 ==================== */
+
+/* 產品卡片 */
+.product-card {
+    width: 100%;
+    max-width: min(350px, 100%);
+}
+
+/* 按摩動作卡片 */
+.massage-item {
+    width: 100%;
+    max-width: min(320px, 100%);
+}
+
+/* 建議卡片 */
+.suggestion-card {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* ==================== 手機專用修正 ==================== */
+
+@media (max-width: 768px) {
+    /* 減少 padding，給內容更多空間 */
+    .container,
+    .content-wrapper,
+    .page-container {
+        padding-left: var(--space-sm, 12px);
+        padding-right: var(--space-sm, 12px);
+    }
+
+    /* 確保卡片在手機上不會太寬 */
+    .card {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    /* 產品列表在手機上單欄顯示 */
+    .product-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md, 16px);
+    }
+
+    .product-card {
+        width: 100%;
+        max-width: 100%;
+        flex: none;
+    }
+
+    /* 按摩動作列表在手機上單欄顯示 */
+    .massage-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md, 16px);
+    }
+
+    .massage-item {
+        width: 100%;
+        max-width: 100%;
+        flex: none;
+    }
+
+    /* 建議列表在手機上單欄顯示 */
+    .suggestion-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md, 16px);
+    }
+
+    .suggestion-card {
+        width: 100%;
+        max-width: 100%;
+        flex: none;
+    }
+
+    /* 圖片容器 */
+    .photo-container,
+    .image-container {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    /* 確保所有內容區塊都不超出 */
+    .section-content,
+    .result-content,
+    .analysis-content {
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+        box-sizing: border-box;
+    }
+}
+
+/* ==================== 極小螢幕修正 ==================== */
+
+@media (max-width: 375px) {
+    /* 在極小螢幕上進一步減少 padding */
+    .container,
+    .content-wrapper,
+    .page-container {
+        padding-left: var(--space-xs, 8px);
+        padding-right: var(--space-xs, 8px);
+    }
+
+    /* 減少卡片內部 padding */
+    .card {
+        padding: var(--space-sm, 12px);
+    }
+
+    /* 減少按鈕 padding */
+    .btn {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+}
+
+/* ==================== 平板修正 ==================== */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    /* 平板上使用兩欄布局 */
+    .product-list,
+    .massage-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-lg, 20px);
+    }
+
+    .product-card,
+    .massage-item {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* ==================== 桌面修正 ==================== */
+
+@media (min-width: 1025px) {
+    /* 桌面上限制最大寬度，避免過寬 */
+    .container,
+    .content-wrapper,
+    .page-container {
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* 桌面上使用三欄布局 */
+    .product-list,
+    .massage-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-xl, 24px);
+    }
+
+    .product-card,
+    .massage-item {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* ==================== 調試工具（開發時使用） ==================== */
+
+/* 取消註解以顯示超出螢幕的元素 */
+/*
+* {
+    outline: 1px solid rgba(255, 0, 0, 0.1);
+}
+
+*:hover {
+    outline: 2px solid rgba(255, 0, 0, 0.5);
+}
+*/

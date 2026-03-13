@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>分析</title>
+  <link rel="stylesheet" href="assets/app.css" />
+  <style>
+    #cameraBox{
+      width: 360px; height: 480px;
+      border-radius: 22px;
+      overflow:hidden;
+      position:relative;
+      background: rgba(0,0,0,.25);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0,0,0,.08);
+      box-shadow: 0 20px 70px rgba(0,0,0,.18);
+    }
+
+    /* video + canvas cover 疊滿 */
+    #video, #meshCanvas{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit: cover;
+    }
+    
+    /* video + canvas cover 疊滿 */
+    /* #video, #meshCanvas{
+      object-fit: contain;
+    } */
+
+    /* 鏡像一致 */
+    #video{ transform: scaleX(-1); }
+    #meshCanvas{
+      transform: scaleX(-1);
+      pointer-events:none;
+      z-index:2;
+    }
+
+    .hint{
+      position:absolute; top:14px; left:12px; right:12px;
+      padding:10px 12px; border-radius:14px;
+      background: rgba(0,0,0,.26);
+      border:1px solid rgba(255,255,255,.22);
+      color: rgba(255,255,255,.92);
+      font-size:13px; letter-spacing:.6px; text-align:center;
+      z-index: 4;
+    }
+
+    #faceGuide{
+      position:absolute; inset: 74px 44px 98px 44px;
+      border-radius: 999px;
+      border:2px dashed rgba(255,255,255,.65);
+      pointer-events:none;
+      animation: pulse 2.5s infinite ease-in-out;
+      z-index: 3;
+    }
+    @keyframes pulse{
+      0%{opacity:.35;transform:scale(.985)}
+      50%{opacity:.85;transform:scale(1)}
+      100%{opacity:.35;transform:scale(.985)}
+    }
+
+    #captureBtn{
+      position:absolute; left:50%; bottom:16px; transform:translateX(-50%);
+      width:76px; height:76px; border-radius:999px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.75), rgba(255,255,255,0) 45%),
+        linear-gradient(135deg, rgba(255,157,184,.95), rgba(242,216,140,.92));
+      border:6px solid rgba(255,255,255,.92);
+      box-shadow: 0 10px 24px rgba(255,157,184,.22), 0 26px 60px rgba(0,0,0,.25);
+      cursor:pointer;
+      z-index: 5;
+    }
+
+    #cameraBox.loading::after{
+      content:"AI 分析中…";
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      background: rgba(10,14,24,.62);
+      font-size:18px; letter-spacing:2px;
+      z-index: 10;
+    }
+
+    #flash{
+      position:fixed; inset:0;
+      background:#fff; opacity:0;
+      pointer-events:none;
+      transition:opacity .15s;
+      z-index: 999;
+    }
+
+    @media (max-width: 920px){
+      #cameraBox{ width:min(92vw,420px); height:min(128vw,560px); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-glass"></div>
+
+  <header>
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <h1>照相</h1>
+        <p>拍照頁面</p>
+      </div>
+    </div>
+    <button class="btn" onclick="location.href='index.html'">回首頁</button>
+  </header>
+
+  <div class="stage">
+    <div id="cameraBox">
+      <video id="video" autoplay playsinline muted></video>
+      <canvas id="meshCanvas"></canvas>
+      <div class="hint" id="hint">相機啟動中…</div>
+      <div id="faceGuide"></div>
+      <div id="captureBtn" aria-label="拍照" role="button"></div>
+    </div>
+  </div>
+
+  <div id="flash"></div>
+  <div class="toast" id="toast"></div>
+  <canvas id="canvas" style="display:none;"></canvas>
+
+  <script type="module">
+    import {
+      FaceLandmarker,
+      FilesetResolver
+    } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+
+    // -------- toast ----------
+    const toastEl = document.getElementById("toast");
+    function toast(msg){
+      if(!toastEl) return alert(msg);
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      setTimeout(()=> toastEl.classList.remove("show"), 2200);
+    }
+
+    // -------- DOM ----------
+    const video = document.getElementById("video");
+    const cameraBox = document.getElementById("cameraBox");
+    const captureBtn = document.getElementById("captureBtn");
+    const canvas = document.getElementById("canvas");
+    const flash = document.getElementById("flash");
+    const meshCanvas = document.getElementById("meshCanvas");
+    const hint = document.getElementById("hint");
+
+    const meshCtx = meshCanvas.getContext("2d", { alpha:true });
+
+    // -------- data ----------
+    const surveyRaw = localStorage.getItem("survey") || "{}";
+
+    // -------- state ----------
+    let stream = null;
+    let busy = false;
+
+    let faceLandmarker = null;
+    let running = false;
+    let lastMetrics = null;
+
+    const SKIP_UPLOAD = true;
+
+    // =========================
+    // cover 對齊：canvas 尺寸跟 cameraBox 一樣
+    // =========================
+    function syncOverlaySize(){
+      const rect = cameraBox.getBoundingClientRect();
+      meshCanvas.width  = Math.round(rect.width  * devicePixelRatio);
+      meshCanvas.height = Math.round(rect.height * devicePixelRatio);
+      meshCanvas.style.width  = rect.width + "px";
+      meshCanvas.style.height = rect.height + "px";
+      meshCtx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    }
+
+    // =========================
+    // 初始化模型
+    // =========================
+    async function initModel(){
+      const fileset = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+      );
+
+      faceLandmarker = await FaceLandmarker.createFromOptions(fileset, {
+        baseOptions: {
+          modelAssetPath:
+            "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+          delegate: "GPU",
+        },
+        runningMode: "VIDEO",
+        numFaces: 1,
+        outputFaceBlendshapes: true,
+        outputFacialTransformationMatrixes: false,
+      });
+
+    }
+
+    function packMetrics(result){
+      const blend = result.faceBlendshapes?.[0]?.categories ?? [];
+      return {
+        ts: Date.now(),
+        blendshapes: blend.map(c => ({ name: c.categoryName, score: c.score })),
+      };
+    }
+
+    // =========================
+    // 畫特效：用官方 drawConnectors（避免你的 conn 解析爆掉）
+    // =========================
+    function drawEffect(result){
+      const rect = cameraBox.getBoundingClientRect();
+      meshCtx.clearRect(0, 0, rect.width, rect.height);
+
+      const landmarks = result.faceLandmarks?.[0];
+      if(!landmarks || !video.videoWidth || !video.videoHeight) return;
+
+      const srcW = video.videoWidth;
+      const srcH = video.videoHeight;
+      const dstW = rect.width;
+      const dstH = rect.height;
+      const scale = Math.max(dstW / srcW, dstH / srcH);
+      const offsetX = (dstW - srcW * scale) / 2;
+      const offsetY = (dstH - srcH * scale) / 2;
+
+      const points = new Array(landmarks.length);
+      for(let i = 0; i < landmarks.length; i++){
+        const lm = landmarks[i];
+        points[i] = {
+          x: lm.x * srcW * scale + offsetX,
+          y: lm.y * srcH * scale + offsetY
+        };
+      }
+
+      const connections = FaceLandmarker.FACE_LANDMARKS_TESSELATION || [];
+      meshCtx.lineWidth = 1;
+      meshCtx.strokeStyle = "rgba(255,255,255,.7)";
+      meshCtx.beginPath();
+      for(const c of connections){
+        const a = c[0] ?? c.start;
+        const b = c[1] ?? c.end;
+        if(a == null || b == null) continue;
+        const p1 = points[a];
+        const p2 = points[b];
+        if(!p1 || !p2) continue;
+        meshCtx.moveTo(p1.x, p1.y);
+        meshCtx.lineTo(p2.x, p2.y);
+      }
+      meshCtx.stroke();
+    }
+
+    function loop(){
+      if(!running) return;
+
+      // 影像還沒真正進來就先不算（避免 undefined.x）
+      if(!video.videoWidth || !video.videoHeight){
+        requestAnimationFrame(loop);
+        return;
+      }
+
+      try{
+        const now = performance.now();
+        const result = faceLandmarker.detectForVideo(video, now);
+        drawEffect(result);
+        lastMetrics = packMetrics(result);
+      }catch(e){
+        // ✅ 特效爆了也不要把整個相機搞死
+        console.error("effect error:", e);
+        meshCtx.clearRect(0,0,meshCanvas.width,meshCanvas.height);
+      }
+
+      requestAnimationFrame(loop);
+    }
+
+    // =========================
+    // 相機
+    // =========================
+    async function openCamera(){
+      if(!navigator.mediaDevices?.getUserMedia){
+        toast("此瀏覽器不支援相機");
+        return;
+      }
+
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode:"user", width:{ideal:1280}, height:{ideal:720} },
+        audio:false
+      });
+
+      video.srcObject = stream;
+
+      await new Promise(resolve => {
+        if(video.readyState >= 2) return resolve();
+        video.onloadedmetadata = () => resolve();
+      });
+
+      // ✅ autoplay 保險：有些環境會卡住
+      const kick = async () => { try{ await video.play(); }catch(e){} };
+      await kick();
+      window.addEventListener("pointerdown", kick, { once:true });
+
+      syncOverlaySize();
+      window.addEventListener("resize", syncOverlaySize);
+
+      if(!faceLandmarker) await initModel();
+
+      running = true;
+      hint.textContent = "相機已啟動，請對準框線後按下拍照";
+      loop();
+    }
+
+    function stopCamera(){
+      running = false;
+      meshCtx.clearRect(0, 0, meshCanvas.width, meshCanvas.height);
+
+      if(stream){
+        stream.getTracks().forEach(t=>t.stop());
+        stream = null;
+      }
+    }
+
+    function flashOnce(){
+      flash.style.opacity = 1;
+      setTimeout(()=> flash.style.opacity = 0, 120);
+    }
+
+    async function getJpegBlob(){
+      const w = video.videoWidth;
+      const h = video.videoHeight;
+      if(!w || !h) throw new Error("Video not ready");
+
+      canvas.width = w;
+      canvas.height = h;
+
+      const ctx = canvas.getContext("2d");
+      ctx.save();
+      ctx.translate(w, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(video, 0, 0, w, h);
+      ctx.restore();
+
+      const blob = await new Promise(resolve => {
+        canvas.toBlob(b => resolve(b), "image/jpeg", 0.95);
+      });
+      if(!blob) throw new Error("toBlob failed");
+      return blob;
+    }
+
+    captureBtn.addEventListener("click", async () => {
+      if(busy) return;
+      busy = true;
+      cameraBox.classList.add("loading");
+
+      try{
+        if(!stream) throw new Error("camera not started");
+
+        const blob = await getJpegBlob();
+        flashOnce();
+
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+        localStorage.setItem("user_photo", dataUrl);
+
+        if(SKIP_UPLOAD){
+          localStorage.removeItem("result");
+          stopCamera();
+          location.href = "result.html?demo=1";
+          return;
+        }
+
+        const form = new FormData();
+        form.append("photo", blob, "capture.jpg");
+        form.append("survey", surveyRaw);
+        if(lastMetrics) form.append("metrics_json", JSON.stringify(lastMetrics));
+
+        const res = await fetch("api/analyze.php", { method:"POST", body: form });
+
+        if(!res.ok){
+          toast("後端分析失敗（請看 api/analyze.php）");
+          return;
+        }
+
+        const ct = res.headers.get("content-type") || "";
+        if(!ct.includes("application/json")){
+          const text = await res.text();
+          console.error("Non-JSON response:", text.slice(0,400));
+          toast("後端回傳不是 JSON（請檢查 PHP 輸出）");
+          return;
+        }
+
+        const payload = await res.json();
+        localStorage.setItem("result", JSON.stringify(payload));
+
+        stopCamera();
+        location.href = "result.html";
+      }catch(e){
+        console.error(e);
+        toast("拍照/上傳失敗（請允許相機權限）");
+      }finally{
+        cameraBox.classList.remove("loading");
+        busy = false;
+      }
+    });
+
+    // 進頁面就啟動相機（不需要按兩次）
+    openCamera().catch(e=>{
+      console.error(e);
+      toast("無法開啟相機：請允許權限，並用 http/https 開啟頁面");
+      hint.textContent = "相機啟動失敗：請允許權限/用 http 或 https 打開";
+    });
+
+    window.addEventListener("beforeunload", stopCamera);
+  </script>
+</body>
+</html>
