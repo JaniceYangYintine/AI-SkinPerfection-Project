@@ -1,0 +1,205 @@
+{
+  "timestamp": "2026-01-22T08:00:00Z",
+  "overall": 78,
+  "metrics": {
+    "glow": 72,
+    "complexion": 80,
+    "blemish": 64,
+    "oilBalance": 70,
+    "evenness": 75
+  },
+  "a_score": 84,
+  "a_summary": "膚色整體明亮，輪廓精神感不錯；但眼周略顯疲勞與暗沉，建議加強放鬆與循環。",
+  "a_issue": "眼睛疲勞",
+  "a_issue_detail": "靜脈瘀血",
+  "a_actions": [
+    {
+      "name": "眼部冷熱交替",
+      "desc": "冷熱敷交替，改善眼周暗沈與靜脈瘀血。",
+      "effect": "減少眼周暗沉與疲憊感。",
+      "gif": ""
+    },
+    {
+      "name": "眼球運動",
+      "desc": "眼睛依序移動並遠望，放鬆眼外肌。",
+      "effect": "舒緩視覺壓力、提升精神感。",
+      "gif": ""
+    }
+  ],
+  "ai_diagnosis": {
+    "positive_feedback": "您的氣色整體穩定，膚色均勻度良好，顯示出良好的作息與保養習慣。光澤度適中，整體呈現健康的自然光感。",
+    "problem_analysis": "眼周區域略顯疲態，建議加強保濕與按摩促進循環。T 字部位油脂分泌稍多，可調整清潔頻率並選用清爽型保養品。"
+  },
+  "b_scores": {
+    "darkCircles": 3.9,
+    "acne": 3.1,
+    "comedones": 2.7,
+    "wrinkles": 2.1,
+    "spots": 3.5
+  },
+  "b_top_issues": [
+    {
+      "name": "黑眼圈",
+      "key": "darkCircles",
+      "score": 3.9,
+      "llm_analysis": "眼周區域循環不佳,靜脈瘀血較為明顯。建議加強眼周保濕與按摩,促進血液循環,減少暗沉感。"
+    },
+    {
+      "name": "斑",
+      "key": "spots",
+      "score": 3.5,
+      "llm_analysis": "臉頰區域色素沉澱,可能與日曬或荷爾蒙變化有關。建議使用美白產品,並做好防曬措施。"
+    }
+  ],
+  "lifestyle_advice": {
+    "nutrition": {
+      "summary": "增加蔬果、減少油炸",
+      "detail": "建議每天攝取 5 份蔬果，包括深綠色蔬菜、Omega-3 食物等。減少油炸食物攝取，改善皮膚油脂分泌。",
+      "items": [
+        "深綠色蔬菜 (菠菜、羽衣甘藍)",
+        "Omega-3 食物 (鮭魚、核桃)",
+        "維生素 C 水果 (奇異果、柑橘)",
+        "堅果與全穀類"
+      ]
+    },
+    "sleep": {
+      "summary": "每晚 7-8 小時睡眠",
+      "detail": "建議固定就寢時間，每晚睡眠 7-8 小時，連續 7 天觀察氣色變化。良好的睡眠有助於皮膚修復。"
+    },
+    "exercise": {
+      "summary": "每週至少 3 次運動",
+      "detail": "保持規律運動，每週至少 3 次，每次 30 分鐘。運動可促進血液循環，改善氣色。避免過度曝曬，做好防曬措施。"
+    }
+  },
+  "c_tips": [
+    "Hydrate earlier in the day and keep the routine consistent for 7 days.",
+    "Add protein at breakfast and reduce late-night sugar spikes.",
+    "Keep sun protection stable to avoid redness and unevenness swings."
+  ],
+  "d_product_recommendations": {
+    "ingredients": [
+      {
+        "issue_name": "黑眼圈",
+        "primary_ingredient": "咖啡因",
+        "core_ingredients": [
+          "維生素K",
+          "煙醯胺"
+        ],
+        "description": "咖啡因能促進眼周血液循環,減少靜脈瘀血,有效改善黑眼圈問題。維生素K可強化微血管,煙醯胺則能提亮膚色。"
+      },
+      {
+        "issue_name": "斑",
+        "primary_ingredient": "維生素C",
+        "core_ingredients": [
+          "熊果素",
+          "煙醯胺",
+          "傳明酸"
+        ],
+        "description": "維生素C能抑制黑色素生成,淡化色斑。熊果素和傳明酸協同作用,加強美白效果,煙醯胺則能改善膚色不均。"
+      }
+    ],
+    "products": [
+      {
+        "id": 1,
+        "name": "Dr.Wu 杏仁酸亮白煥膚精華",
+        "brand": "Dr.Wu",
+        "image_url": "https://via.placeholder.com/240x180/D4A574/FFFFFF?text=Dr.Wu",
+        "product_url": "https://www.drwu.com/",
+        "momo_url": "https://www.momoshop.com.tw/search/searchShop.jsp?keyword=Dr.Wu+杏仁酸",
+        "ingredients": [
+          "杏仁酸",
+          "煙醯胺",
+          "維生素C"
+        ]
+      },
+      {
+        "id": 2,
+        "name": "理膚寶水 B5全面修復霜",
+        "brand": "La Roche-Posay",
+        "image_url": "https://via.placeholder.com/240x180/A8C5DD/FFFFFF?text=LRP",
+        "product_url": "https://www.laroche-posay.tw/",
+        "momo_url": "https://www.momoshop.com.tw/search/searchShop.jsp?keyword=理膚寶水+B5",
+        "ingredients": [
+          "維生素B5",
+          "雪亞脂",
+          "維生素E"
+        ]
+      },
+      {
+        "id": 3,
+        "name": "OLAY 光感小白瓶",
+        "brand": "OLAY",
+        "image_url": "https://via.placeholder.com/240x180/E8B4B8/FFFFFF?text=OLAY",
+        "product_url": "https://www.olay.com.tw/",
+        "momo_url": "https://www.momoshop.com.tw/search/searchShop.jsp?keyword=OLAY+光感小白瓶",
+        "ingredients": [
+          "煙醯胺",
+          "維生素C",
+          "維生素E"
+        ]
+      },
+      {
+        "id": 4,
+        "name": "雅詩蘭黛 特潤超導修護露",
+        "brand": "Estée Lauder",
+        "image_url": "https://via.placeholder.com/240x180/C9A0DC/FFFFFF?text=EL",
+        "product_url": "https://www.esteelauder.com.tw/",
+        "momo_url": "https://www.momoshop.com.tw/search/searchShop.jsp?keyword=雅詩蘭黛+特潤",
+        "ingredients": [
+          "玻尿酸",
+          "酵母精萃",
+          "維生素E"
+        ]
+      },
+      {
+        "id": 5,
+        "name": "蘭蔻 超未來肌因賦活露",
+        "brand": "Lancôme",
+        "image_url": "https://via.placeholder.com/240x180/B8A9C9/FFFFFF?text=Lancome",
+        "product_url": "https://www.lancome.com.tw/",
+        "momo_url": "https://www.momoshop.com.tw/search/searchShop.jsp?keyword=蘭蔻+超未來",
+        "ingredients": [
+          "二裂酵母",
+          "玻尿酸",
+          "維生素C"
+        ]
+      },
+      {
+        "id": 6,
+        "name": "專科 完美保濕化妝水",
+        "brand": "SENKA",
+        "image_url": "https://via.placeholder.com/240x180/A4C2A5/FFFFFF?text=SENKA",
+        "product_url": "https://www.senka.com.tw/",
+        "momo_url": "https://www.momoshop.com.tw/search/searchShop.jsp?keyword=專科+保濕化妝水",
+        "ingredients": [
+          "玻尿酸",
+          "絲蛋白",
+          "甘油"
+        ]
+      }
+    ]
+  },
+  "products": [
+    {
+      "name": "Calm Balance Serum",
+      "desc": "Lightweight support for redness and uneven texture.",
+      "tag": "Soothing",
+      "url": "#",
+      "image": "assets/background.jpg"
+    },
+    {
+      "name": "Barrier Repair Cream",
+      "desc": "Supports moisture retention and reduces dryness.",
+      "tag": "Barrier",
+      "url": "#",
+      "image": "assets/background.jpg"
+    },
+    {
+      "name": "Daily UV Shield",
+      "desc": "Basic daily UV care to stabilize complexion.",
+      "tag": "UV",
+      "url": "#",
+      "image": "assets/background.jpg"
+    }
+  ]
+}

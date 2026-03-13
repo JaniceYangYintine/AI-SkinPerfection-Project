@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 美肌實驗室 - 技術原型</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --primary: #f5e6d3; --accent: #d4a373; --dark: #333; }
+        body { font-family: sans-serif; background: #faf9f6; margin: 0; padding-bottom: 50px; }
+        .page { max-width: 500px; margin: auto; padding: 20px; display: none; }
+        .active { display: block; }
+        .card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        
+        /* 相機區 */
+        .camera-box { position: relative; width: 100%; height: 400px; background: #000; border-radius: 15px; overflow: hidden; }
+        .face-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 280px; border: 2px dashed #fff; border-radius: 50%; }
+        
+        /* 推薦標籤 */
+        .tag { display: inline-block; padding: 5px 12px; border-radius: 15px; background: var(--primary); font-size: 12px; margin: 2px; }
+        .match-score { color: #d4a373; font-weight: bold; font-size: 1.2rem; }
+        
+        button { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div id="page-scan" class="page active">
+    <h2>📸 臉部拍攝</h2>
+    <p>請將臉部對齊虛線，系統將自動分析 [cite: 3, 4]</p>
+    <div class="camera-box">
+        <div class="face-guide"></div>
+        <div style="color: white; position: absolute; bottom: 10px; width: 100%; text-align: center;">模擬相機串流中...</div>
+    </div>
+    <br>
+    <button onclick="startAnalysis()">開始 AI 膚況分析</button>
+</div>
+
+<div id="page-result" class="page">
+    <h2 style="text-align: center;">AI 分析報告</h2>
+
+    <div class="card" style="background: #fff0eb;">
+        <h3>A. 氣色急救站 [cite: 37]</h3>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>今日活力指數: <strong>78</strong> [cite: 38]</div>
+            <div class="tag">狀態不佳</div>
+        </div>
+        <p>💡 急救行動：1. 多喝水 2. 保濕面膜 [cite: 40, 41]</p>
+    </div>
+
+    <div class="card">
+        <h3>B. 深度問題偵測 [cite: 47]</h3>
+        <canvas id="skinChart"></canvas>
+        <p>⚠️ 偵測到主要問題：<strong>發炎痘痘 (6.8分)</strong> [cite: 153, 154]</p>
+        <p>主要位置：T字部位 [cite: 155]</p>
+    </div>
+
+    <div class="card">
+        <h3>C. 成分處方籤 [cite: 52]</h3>
+        <p>針對您的痘痘問題，建議使用：</p>
+        <div class="tag">水楊酸 (代謝油脂) [cite: 180]</div>
+        <div class="tag">維生素 B5 (舒緩修復) [cite: 190]</div>
+        <p><small>*注意：A醇類建議夜間使用 [cite: 186]</small></p>
+    </div>
+
+    <div class="card">
+        <h3>D. 智慧選品 [cite: 56, 203]</h3>
+        <div style="border-left: 4px solid var(--accent); padding-left: 10px;">
+            <p><strong>理膚寶水 Effaclar DUO+</strong> [cite: 213]</p>
+            <p class="match-score">匹配度：94% [cite: 216]</p>
+            <p><small>根據您的規則：含 B5 + 適合混合肌 [cite: 206, 209]</small></p>
+            <button style="padding: 5px; font-size: 12px;" onclick="alert('導向 momo 購物...')">前往購買 ($1,080) [cite: 221]</button>
+        </div>
+    </div>
+    
+    <button onclick="location.reload()" style="background: #999;">重新測試</button>
+</div>
+
+<script>
+    function startAnalysis() {
+        alert("正在執行 YOLOv8 物件偵測與 OpenCV 色彩分析...");
+        document.getElementById('page-scan').classList.remove('active');
+        document.getElementById('page-result').classList.add('active');
+        initChart();
+    }
+
+    function initChart() {
+        const ctx = document.getElementById('skinChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['保濕', '泛紅', '毛孔', '暗沉', '痘痘'],
+                datasets: [{
+                    label: '您的膚況分數',
+                    data: [8, 5, 4, 6, 7], // 模擬後端數據 [cite: 171]
+                    backgroundColor: 'rgba(212, 163, 115, 0.2)',
+                    borderColor: '#d4a373',
+                    pointBackgroundColor: '#d4a373'
+                }]
+            },
+            options: { scales: { r: { suggestMin: 0, suggestMax: 10 } } }
+        });
+    }
+</script>
+
+</body>
+</html>
+
+
+#https://fictional-space-happiness-7vx74wvr656g2jwj-80.app.github.dev/

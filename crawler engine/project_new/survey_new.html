@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>問卷</title>
+    <link rel="stylesheet" href="css/app.css" />
+    <style>
+        /* 進度條 */
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ade80, #10b981);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 24px;
+        }
+
+        /* 問題容器 */
+        .question-container {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .question {
+            display: none;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.3s ease;
+        }
+
+        .question.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .question-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .opts {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .opt {
+            padding: 16px 20px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.62);
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .opt:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(74, 222, 128, 0.3);
+        }
+
+        .opt input {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .opt.selected {
+            background: rgba(74, 222, 128, 0.15);
+            border-color: #4ade80;
+        }
+
+        /* 按鈕區域 */
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            margin-top: 32px;
+        }
+
+        .btn-secondary {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        /* 問卷說明頁 */
+        #introPage {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .intro-icon {
+            font-size: 54px;
+            margin-bottom: 24px;
+            background: rgba(74, 222, 128, 0.1);
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: #10b981;
+        }
+
+        .intro-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .intro-desc {
+            font-size: 15px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 32px;
+            max-width: 280px;
+        }
+
+        .intro-features {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .feature-icon {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .btn-start {
+            width: 100%;
+            padding: 18px;
+            font-size: 17px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #4ade80, #10b981);
+            color: white;
+            border: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-start:active {
+            transform: scale(0.97);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Loading 樣式 */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #10b981;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #loading-text {
+            color: white;
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        /* 照片預覽 */
+        .photo-preview {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .photo-preview-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid rgba(74, 222, 128, 0.3);
+            transform: scaleX(-1);
+            /* 保持與拍照時的鏡像一致 */
+        }
+
+        .photo-preview-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .photo-preview-label {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .photo-preview-status {
+            font-size: 14px;
+            font-weight: 600;
+            color: #10b981;
+        }
+
+        .btn-retake-small {
+            padding: 8px 16px;
+            font-size: 13px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-retake-small:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-glass"></div>
+
+    <!-- Header 已移除,保持頁面簡潔 -->
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p id="loading-text">分析中,請稍候...<br />預計需要 5-10 秒</p>
+    </div>
+
+    <div class="stage">
+        <div class="card">
+            <div class="card-head">
+                <div>
+                    <div class="title">拍照前快速問卷</div>
+                    <div class="sub">用來調整分析權重與建議內容</div>
+                </div>
+            </div>
+
+            <div class="body">
+                <!-- 照片預覽 -->
+                <div id="photoPreview" class="photo-preview" style="display: none;">
+                    <img id="photoPreviewImg" class="photo-preview-img" src="" alt="拍攝照片">
+                    <div class="photo-preview-info">
+                        <div class="photo-preview-label">已拍攝照片</div>
+                        <div class="photo-preview-status">✓ 照片已準備好</div>
+                    </div>
+                    <button type="button" class="btn-retake-small" onclick="location.href='analyze.html'">重新拍照</button>
+                </div>
+                <!-- 進度指示 -->
+                <div id="progressBarContainer" class="progress-bar" style="display: none;">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div id="progressText" class="progress-text" style="display: none;">第 0/0 題</div>
+
+                <!-- 問題容器 -->
+                <div class="question-container">
+                    <!-- 問卷說明頁 -->
+                    <div id="introPage">
+                        <div class="intro-icon">📝</div>
+                        <div class="intro-title">為什麼需要問卷？</div>
+                        <p class="intro-desc">為了提供精準的分析結果，我們需要了解您的生活習慣與膚質狀況。</p>
+
+                        <div class="intro-features">
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span>了解您的膚質屬性</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span>排除生活壓力干擾</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span>提供個人化保養建議</span>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn-start" id="startBtn">開始填寫 (約 30 秒)</button>
+                    </div>
+
+                    <div id="questionForm" style="display: none;">
+                        <div id="questionsWrapper">
+                            <!-- Q1: 年齡 -->
+                            <div class="question active" data-question="1" data-name="age" data-required="true">
+                                <div class="question-title">您的年齡區間？</div>
+                                <div class="opts">
+                                    <label class="opt"><input type="radio" name="age" value="under20">20歲以下</label>
+                                    <label class="opt"><input type="radio" name="age" value="20-30">20-30歲</label>
+                                    <label class="opt"><input type="radio" name="age" value="30-40">30-40歲</label>
+                                    <label class="opt"><input type="radio" name="age" value="over40">40歲以上</label>
+                                </div>
+                            </div>
+
+                            <!-- Q2: 膚況 -->
+                            <div class="question" data-question="2" data-name="skinCondition" data-required="true">
+                                <div class="question-title">清潔肌膚後30分鐘，膚況是？</div>
+                                <div class="opts">
+                                    <label class="opt"><input type="radio" name="skinCondition"
+                                            value="dry">全臉乾燥緊繃脫皮</label>
+                                    <label class="opt"><input type="radio" name="skinCondition"
+                                            value="oily">全臉出油泛油光</label>
+                                    <label class="opt"><input type="radio" name="skinCondition"
+                                            value="combo">T字出油兩頰乾</label>
+                                    <label class="opt"><input type="radio" name="skinCondition"
+                                            value="comfortable">全臉舒適</label>
+                                </div>
+                            </div>
+
+                            <!-- Q3: 敏感程度 -->
+                            <div class="question" data-question="3" data-name="sensitivity" data-required="true">
+                                <div class="question-title">您對外界刺激或新產品的敏感程度？</div>
+                                <div class="opts">
+                                    <label class="opt"><input type="radio" name="sensitivity"
+                                            value="high">容易泛紅敏感</label>
+                                    <label class="opt"><input type="radio" name="sensitivity"
+                                            value="medium">偶爾會但可接受</label>
+                                    <label class="opt"><input type="radio" name="sensitivity" value="low">幾乎沒有問題</label>
+                                </div>
+                            </div>
+
+                            <!-- Q4: 保養節奏 -->
+                            <div class="question" data-question="4" data-name="rhythm" data-required="true">
+                                <div class="question-title">您更偏好哪種保養節奏？</div>
+                                <div class="opts">
+                                    <label class="opt"><input type="radio" name="rhythm" value="complete">早晚完整一套</label>
+                                    <label class="opt"><input type="radio" name="rhythm" value="single">僅早或晚單一步驟</label>
+                                    <label class="opt"><input type="radio" name="rhythm" value="random">隨性不固定</label>
+                                </div>
+                            </div>
+
+                            <!-- Q5: 睡眠時數 -->
+                            <div class="question" data-question="5" data-name="sleepHours" data-required="true">
+                                <div class="question-title">最近一週的平均睡眠時數？</div>
+                                <div class="opts">
+                                    <label class="opt"><input type="radio" name="sleepHours" value="less6">少於6小時</label>
+                                    <label class="opt"><input type="radio" name="sleepHours" value="6-7">6-7小時</label>
+                                    <label class="opt"><input type="radio" name="sleepHours" value="7-8">7-8小時</label>
+                                    <label class="opt"><input type="radio" name="sleepHours" value="over8">超過8小時</label>
+                                </div>
+                            </div>
+
+                            <!-- Q6: 壓力程度 -->
+                            <div class="question" data-question="6" data-name="stress" data-required="true">
+                                <div class="question-title">最近覺得壓力大嗎？</div>
+                                <div class="opts">
+                                    <label class="opt"><input type="radio" name="stress" value="none">幾乎沒有</label>
+                                    <label class="opt"><input type="radio" name="stress" value="sometimes">偶爾覺得有</label>
+                                    <label class="opt"><input type="radio" name="stress" value="often">經常覺得壓力大</label>
+                                </div>
+                            </div>
+
+                            <!-- Q7: 運動頻率 -->
+                            <div class="question" data-question="7" data-name="exercise" data-required="true">
+                                <div class="question-title">一週大約幾天有運動超過30分鐘？</div>
+                                <div class="opts">
+                                    <label class="opt"><input type="radio" name="exercise" value="0">0天</label>
+                                    <label class="opt"><input type="radio" name="exercise" value="1-2">1-2天</label>
+                                    <label class="opt"><input type="radio" name="exercise" value="3-4">3-4天</label>
+                                    <label class="opt"><input type="radio" name="exercise" value="5-7">5-7天</label>
+                                </div>
+                            </div>
+
+                            <!-- Q8: 油炸頻率 -->
+                            <div class="question" data-question="8" data-name="friedFood" data-required="true">
+                                <div class="question-title">一週油炸重油食物的頻率？</div>
+                                <div class="opts">
+                                    <label class="opt"><input type="radio" name="friedFood" value="0-1">0-1次</label>
+                                    <label class="opt"><input type="radio" name="friedFood" value="2-3">2-3次</label>
+                                    <label class="opt"><input type="radio" name="friedFood" value="4-5">4-5次</label>
+                                    <label class="opt"><input type="radio" name="friedFood" value="6over">6次以上</label>
+                                </div>
+                            </div>
+
+                            <!-- Q9: 蔬果攝取 -->
+                            <div class="question" data-question="9" data-name="diet" data-required="true">
+                                <div class="question-title">您每天蔬果攝取量？</div>
+                                <div class="opts">
+                                    <label class="opt"><input type="radio" name="diet" value="balanced">很多均衡</label>
+                                    <label class="opt"><input type="radio" name="diet" value="low">一般少量</label>
+                                    <label class="opt"><input type="radio" name="diet" value="none">很少幾乎沒有</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 導航按鈕 -->
+                        <div class="nav-buttons">
+                            <button type="button" class="btn btn-secondary" id="prevBtn"
+                                style="display: none;">上一題</button>
+                            <button type="button" class="btn btn-primary" id="nextBtn">下一題</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toast" id="toast"></div>
+
+            <script type="module">
+                import { toast } from "./js/utils.js";
+
+                const questions = document.querySelectorAll('.question');
+                const progressFill = document.getElementById('progressFill');
+                const progressText = document.getElementById('progressText');
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+
+                let currentQuestion = 1;
+                const totalQuestions = questions.length;
+                const answers = {};
+
+                // 更新進度
+                function updateProgress() {
+                    const progress = (currentQuestion / totalQuestions) * 100;
+                    progressFill.style.width = `${progress}%`;
+                    progressText.textContent = `第 ${currentQuestion}/${totalQuestions} 題`;
+                }
+
+                // 顯示指定題目
+                function showQuestion(num) {
+                    questions.forEach((q, index) => {
+                        q.classList.remove('active');
+                        if (index + 1 === num) {
+                            setTimeout(() => q.classList.add('active'), 50);
+                        }
+                    });
+
+                    // 更新按鈕狀態
+                    prevBtn.style.display = num === 1 ? 'none' : 'block';
+                    nextBtn.textContent = num === totalQuestions ? '完成問卷' : '下一題';
+
+                    updateProgress();
+                }
+
+                // 檢查當前題目是否已回答
+                function isCurrentQuestionAnswered() {
+                    const current = questions[currentQuestion - 1];
+                    const name = current.dataset.name;
+                    const required = current.dataset.required === 'true';
+
+                    if (!required) return true; // 選填題可以跳過
+
+                    const selected = document.querySelector(`input[name="${name}"]:checked`);
+                    return selected !== null;
+                }
+
+                // 儲存答案
+                function saveAnswer() {
+                    const current = questions[currentQuestion - 1];
+                    const name = current.dataset.name;
+                    const selected = document.querySelector(`input[name="${name}"]:checked`);
+
+                    if (selected) {
+                        answers[name] = selected.value;
+                    }
+                }
+
+                // 下一題
+                nextBtn.addEventListener('click', () => {
+                    if (!isCurrentQuestionAnswered()) {
+                        toast('請選擇一個選項');
+                        return;
+                    }
+
+                    saveAnswer();
+
+                    if (currentQuestion === totalQuestions) {
+                        // 完成問卷
+                        submitSurvey();
+                    } else {
+                        currentQuestion++;
+                        showQuestion(currentQuestion);
+                    }
+                });
+
+                // 上一題
+                prevBtn.addEventListener('click', () => {
+                    if (currentQuestion > 1) {
+                        saveAnswer();
+                        currentQuestion--;
+                        showQuestion(currentQuestion);
+                    }
+                });
+
+                // 點擊選項時自動進入下一題（可選）
+                questions.forEach((question) => {
+                    const inputs = question.querySelectorAll('input[type="radio"]');
+                    inputs.forEach(input => {
+                        input.addEventListener('change', (e) => {
+                            // 標記選中狀態
+                            question.querySelectorAll('.opt').forEach(opt => opt.classList.remove('selected'));
+                            e.target.closest('.opt').classList.add('selected');
+
+                            // 延遲自動進入下一題
+                            setTimeout(() => {
+                                if (currentQuestion < totalQuestions) {
+                                    nextBtn.click();
+                                }
+                            }, 300);
+                        });
+                    });
+                });
+
+                // 提交問卷
+                async function submitSurvey() {
+                    try {
+                        // 1. 收集問卷答案
+                        const survey = {
+                            ...answers,
+                            timestamp: new Date().toISOString()
+                        };
+
+                        // 2. 儲存問卷到 localStorage (備份)
+                        localStorage.setItem("survey", JSON.stringify(survey));
+
+                        // 3. 取得照片
+                        const photo = localStorage.getItem('user_photo');
+                        if (!photo) {
+                            throw new Error('找不到照片,請重新拍照');
+                        }
+
+                        // 4. 取得 LINE User ID (開發模式使用假 ID)
+                        let userId = 'dev-user-' + Date.now();
+
+                        // TODO: 正式環境時,改用 LIFF SDK 取得真實 User ID
+                        // if (typeof liff !== 'undefined' && liff.isLoggedIn()) {
+                        //     userId = liff.getContext().userId;
+                        // }
+
+                        // 5. 顯示 Loading
+                        showLoading();
+
+                        // 6. 準備 API 請求資料
+                        console.log('📤 準備提交分析...', {
+                            userId,
+                            answersCount: Object.keys(answers).length
+                        });
+
+                        // 7. 使用 utils.js 的 submitAnalysis 函數
+                        //    動態 import (支援 ES Module)
+                        const { submitAnalysis, getLineUserId } = await import('./js/utils.js');
+
+                        // 取得 LINE User ID (如果有 LIFF)
+                        const lineUserId = getLineUserId() || userId;
+
+                        // 呼叫提交 API
+                        const result = await submitAnalysis({
+                            photoBase64: photo,
+                            answers: answers,
+                            lineUserId: lineUserId
+                        });
+
+                        if (!result.success) {
+                            throw new Error(result.message || '提交失敗');
+                        }
+
+                        console.log('✅ 分析提交成功', result.session_id);
+
+                        // 8. 隱藏 Loading
+                        hideLoading();
+
+                        // 9. 顯示成功訊息
+                        toast("問卷已完成,生成報告中…");
+
+                        // 10. 跳轉到結果頁
+                        setTimeout(() => {
+                            location.href = "result_new.html";
+                        }, 800);
+
+                    } catch (error) {
+                        console.error('❌ 提交分析失敗:', error);
+                        hideLoading();
+
+                        // 顯示錯誤訊息
+                        alert('分析失敗: ' + error.message + '\n\n請重試或聯繫客服');
+                    }
+                }
+
+                // 顯示 Loading
+                function showLoading() {
+                    const overlay = document.getElementById('loading-overlay');
+                    if (overlay) {
+                        overlay.style.display = 'flex';
+                    }
+                }
+
+                // 隱藏 Loading
+                function hideLoading() {
+                    const overlay = document.getElementById('loading-overlay');
+                    if (overlay) {
+                        overlay.style.display = 'none';
+                    }
+                }
+
+                // 開始按鈕點擊事件
+                document.getElementById('startBtn').onclick = () => {
+                    document.getElementById('introPage').style.display = 'none';
+                    document.getElementById('questionForm').style.display = 'block';
+                    document.getElementById('progressBarContainer').style.display = 'block';
+                    document.getElementById('progressText').style.display = 'block';
+                    updateProgress();
+                };
+
+                // 初始化 - 檢查並顯示照片預覽
+                function initPhotoPreview() {
+                    const photo = localStorage.getItem('user_photo');
+                    if (photo) {
+                        const previewContainer = document.getElementById('photoPreview');
+                        const previewImg = document.getElementById('photoPreviewImg');
+                        if (previewContainer && previewImg) {
+                            previewImg.src = photo;
+                            previewContainer.style.display = 'flex';
+                        }
+                    }
+                }
+
+                // 頁面載入時執行
+                initPhotoPreview();
+            </script>
+</body>
+
+</html>

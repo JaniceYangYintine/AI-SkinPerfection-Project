@@ -1,0 +1,129 @@
+<mxfile host="app.diagrams.net" modified="2026-01-24T12:22:00.000Z" agent="draw.io" version="22.1.16">
+  <diagram name="軟體架構圖" id="software-architecture">
+    <mxGraphModel dx="1434" dy="844" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- 泳道容器 -->
+        <mxCell id="swimlane-container" value="AI 美膚分析系統 - 完整資料流程" style="swimlane;html=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontal=1;startSize=40;horizontalStack=0;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="1080" height="740" as="geometry" />
+        </mxCell>
+        
+        <!-- 泳道 1: Frontend -->
+        <mxCell id="lane-frontend" value="Frontend (LIFF)" style="swimlane;html=1;startSize=40;horizontal=0;fillColor=#E3F2FD;fontSize=14;fontStyle=1;" vertex="1" parent="swimlane-container">
+          <mxGeometry y="40" width="1080" height="150" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="frontend-1" value="使用者上傳&#xa;照片+問卷" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BA68C8;strokeColor=#7B1FA2;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="lane-frontend">
+          <mxGeometry x="60" y="30" width="120" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="frontend-2" value="呼叫 n8n&#xa;POST /webhook/analyze" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BA68C8;strokeColor=#7B1FA2;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="lane-frontend">
+          <mxGeometry x="220" y="30" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="frontend-3" value="收到&#xa;session_id" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BA68C8;strokeColor=#7B1FA2;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="lane-frontend">
+          <mxGeometry x="780" y="30" width="100" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="frontend-4" value="呼叫 GCP API&#xa;GET /get-result" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BA68C8;strokeColor=#7B1FA2;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="lane-frontend">
+          <mxGeometry x="920" y="30" width="120" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- 泳道 2: n8n -->
+        <mxCell id="lane-n8n" value="n8n Master Workflow" style="swimlane;html=1;startSize=40;horizontal=0;fillColor=#BBDEFB;fontSize=14;fontStyle=1;" vertex="1" parent="swimlane-container">
+          <mxGeometry y="190" width="1080" height="350" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n8n-1" value="1. Webhook&#xa;Trigger" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-n8n">
+          <mxGeometry x="220" y="20" width="90" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n8n-2" value="2. Create&#xa;Session (UUID)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-n8n">
+          <mxGeometry x="220" y="100" width="90" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n8n-3" value="3. Save to&#xa;MySQL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-n8n">
+          <mxGeometry x="220" y="180" width="90" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n8n-4" value="4. Upload&#xa;Photo to GCP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-n8n">
+          <mxGeometry x="220" y="260" width="90" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n8n-5" value="5. Call AI API&#xa;(A 區)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-n8n">
+          <mxGeometry x="340" y="20" width="90" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n8n-6" value="6. Call AI API&#xa;(B 區)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-n8n">
+          <mxGeometry x="340" y="100" width="90" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n8n-7" value="7. Execute&#xa;Workflow (C 區)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-n8n">
+          <mxGeometry x="460" y="20" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n8n-8" value="8. Execute&#xa;Workflow (D 區)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-n8n">
+          <mxGeometry x="460" y="100" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n8n-9" value="9. Aggregate&#xa;Results" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-n8n">
+          <mxGeometry x="640" y="60" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="n8n-10" value="10. Respond&#xa;session_id" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-n8n">
+          <mxGeometry x="780" y="60" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- 泳道 3: AI Services -->
+        <mxCell id="lane-ai" value="AI Services" style="swimlane;html=1;startSize=40;horizontal=0;fillColor=#FFE0B2;fontSize=14;fontStyle=1;" vertex="1" parent="swimlane-container">
+          <mxGeometry y="540" width="1080" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ai-1" value="MediaPipe + Gemini&#xa;(A 區: 氣色分析)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-ai">
+          <mxGeometry x="340" y="20" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ai-2" value="YOLO 11N&#xa;(B 區: 膚況偵測)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9800;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-ai">
+          <mxGeometry x="480" y="20" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- 泳道 4: Database -->
+        <mxCell id="lane-db" value="Database (MySQL)" style="swimlane;html=1;startSize=40;horizontal=0;fillColor=#C8E6C9;fontSize=14;fontStyle=1;" vertex="1" parent="swimlane-container">
+          <mxGeometry y="640" width="1080" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="db-1" value="📊 MySQL Database&#xa;users | sessions | session_skin_scores&#xa;session_llm_analysis | products | ingredients" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontColor=#FFFFFF;fontSize=10;align=center;" vertex="1" parent="lane-db">
+          <mxGeometry x="220" y="20" width="520" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- 箭頭連接 -->
+        <mxCell id="arrow-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#7B1FA2;" edge="1" parent="1" source="frontend-1" target="frontend-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1565C0;" edge="1" parent="1" source="frontend-2" target="n8n-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1565C0;" edge="1" parent="1" source="n8n-1" target="n8n-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1565C0;" edge="1" parent="1" source="n8n-2" target="n8n-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1565C0;" edge="1" parent="1" source="n8n-3" target="n8n-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#1565C0;" edge="1" parent="1" source="n8n-10" target="frontend-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

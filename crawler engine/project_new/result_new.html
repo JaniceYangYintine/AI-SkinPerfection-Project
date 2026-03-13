@@ -1,0 +1,2244 @@
+<!doctype html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>分析結果</title>
+    <!-- Beauty Spa 風格設計系統 -->
+    <link rel="stylesheet" href="css/design-system.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/action-recommendations.css" />
+
+    <style>
+        /* ========================================
+       防止手機左右晃動
+       ======================================== */
+        html,
+        body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+
+        /* ========================================
+           浮動式首頁按鈕
+           ======================================== */
+        .floating-home-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent, #CDA96E);
+            color: var(--primary-dark, #14271F);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(205, 169, 110, 0.4);
+            transition: all 0.2s ease;
+            z-index: 100;
+        }
+
+        .floating-home-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 24px rgba(205, 169, 110, 0.5);
+        }
+
+        .floating-home-btn:active {
+            transform: scale(0.95);
+        }
+
+        .floating-home-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* ========================================
+       總覽頁樣式
+       ======================================== */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        /* 手機版:卡片填滿寬度 */
+        @media (max-width: 768px) {
+            .overview-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+
+        .section-card {
+            padding: 20px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, .95);
+            border: 1px solid rgba(0, 0, 0, .08);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, .08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .section-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 50px rgba(0, 0, 0, .12);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+
+        .section-preview {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .section-score {
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 12px 0;
+        }
+
+        .section-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(255, 155, 130, 0.12);
+            color: var(--accent-dark);
+            margin-top: 8px;
+        }
+
+        /* A區特殊樣式 - 左右佈局 */
+        .section-card.card-a {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            /* 移除特殊背景，統一使用白色 */
+        }
+
+        .card-left {
+            flex-shrink: 0;
+        }
+
+        .card-right {
+            flex: 1;
+        }
+
+        /* B區特殊樣式 - 左右佈局 */
+        .section-card.card-b {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .card-b .radar-preview {
+            flex-shrink: 0;
+            width: 140px;
+            height: 110px;
+            margin: 0;
+        }
+
+        /* 左側內容區 */
+        .card-b .card-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* B 區徽章垂直排列 */
+        .card-b .top-issues-badges {
+            flex-direction: column;
+            gap: 8px;
+            margin: 8px 0;
+        }
+
+        .card-b .issue-badge {
+            width: 100%;
+        }
+
+        /* 圓形分數 */
+        .score-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+        }
+
+        .score-number {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .action-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .item-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        /* 快速摘要樣式 */
+        .quick-summary {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin: 8px 0;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .quick-summary.positive {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.04));
+            border-left: 3px solid rgba(16, 185, 129, 0.6);
+        }
+
+        .quick-summary.attention {
+            background: linear-gradient(135deg, rgba(255, 155, 130, 0.08), rgba(255, 155, 130, 0.04));
+            border-left: 3px solid rgba(255, 155, 130, 0.6);
+        }
+
+        .summary-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+            line-height: 1.5;
+        }
+
+        .quick-summary span:last-child {
+            flex: 1;
+            color: var(--text);
+        }
+
+        /* B 區 Top 2 問題徽章樣式 */
+        .top-issues-badges {
+            display: flex;
+            gap: 10px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+
+        .issue-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            transition: all 0.2s;
+        }
+
+        .issue-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .issue-badge.severe {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.06));
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .issue-badge.warning {
+            background: linear-gradient(135deg, rgba(251, 146, 60, 0.12), rgba(251, 146, 60, 0.06));
+            border-color: rgba(251, 146, 60, 0.3);
+        }
+
+        .issue-badge.moderate {
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.12), rgba(234, 179, 8, 0.06));
+            border-color: rgba(234, 179, 8, 0.3);
+        }
+
+        .badge-icon {
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .badge-name {
+            color: var(--text-dark);
+        }
+
+        .badge-score {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* C 區生活建議徽章樣式 */
+        .lifestyle-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .advice-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            transition: all 0.2s;
+        }
+
+        .advice-badge:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .advice-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
+        .advice-text {
+            flex: 1;
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        /* ========================================
+       詳情頁 - 全螢幕滾動
+       ======================================== */
+        .detail-container {
+            display: none;
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .detail-container.active {
+            display: block;
+        }
+
+        .detail-section {
+            min-height: 100vh;
+            scroll-snap-align: start;
+            padding: 100px 20px 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .detail-content {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, .95);
+            border-radius: 22px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .10);
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .scroll-hint {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: var(--muted);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* ========================================
+       橫向滑動卡片
+       ======================================== */
+        .horizontal-scroll {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 16px 0;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .horizontal-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .horizontal-scroll::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, .15);
+            border-radius: 999px;
+        }
+
+        .product-card {
+            flex: 0 0 240px;
+            scroll-snap-align: start;
+            background: rgba(255, 255, 255, .80);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, .08);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: #f5f5f5;
+        }
+
+        .product-info {
+            padding: 16px;
+        }
+
+        .product-brand {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+
+        .product-name {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .product-ingredient,
+        .product-ingredients {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .product-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .product-link {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, .12);
+            background: rgba(255, 255, 255, .90);
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+
+        .product-link:hover {
+            background: rgba(255, 155, 130, 0.12);
+            border-color: var(--accent);
+        }
+
+        /* ========================================
+       按鈕樣式
+       ======================================== */
+        .back-btn {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 100;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, .90);
+            border: 1px solid rgba(0, 0, 0, .10);
+            border-radius: 999px;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, .16);
+        }
+
+        .save-report-btn {
+            width: 100%;
+            max-width: 400px;
+            margin: 32px auto 0;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: 16px;
+            font-weight: 900;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 12px 32px rgba(255, 155, 130, 0.25);
+            transition: all 0.3s;
+        }
+
+        .save-report-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 40px rgba(255, 155, 130, 0.35);
+        }
+
+        /* ========================================
+       雷達圖樣式
+       ======================================== */
+        .radar-preview {
+            width: 100%;
+            max-width: 200px;
+            height: 150px;
+            margin: 16px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .massage-card {
+            background: rgba(255, 255, 255, .95);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 16px 0;
+            border: 1px solid rgba(0, 0, 0, .08);
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .massage-gif {
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin: 12px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        /* ========================================
+       AI 診斷區塊樣式
+       ======================================== */
+        .diagnosis-positive {
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.04));
+            border-left: 4px solid var(--accent);
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .diagnosis-positive p {
+            margin: 0;
+            line-height: 1.7;
+            color: var(--text);
+        }
+
+        .diagnosis-problems {
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(255, 155, 130, 0.08), rgba(255, 155, 130, 0.04));
+            border-left: 4px solid var(--accent-dark);
+            border-radius: 12px;
+        }
+
+        .diagnosis-problems h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            color: var(--text-dark);
+        }
+
+        .diagnosis-problems p {
+            margin: 0;
+            line-height: 1.7;
+            color: var(--text);
+        }
+
+        .advice-text {
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        /* D 區成分徽章樣式 */
+        .ingredients-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .ingredient-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.12), rgba(212, 165, 116, 0.06));
+            border: 1px solid rgba(212, 165, 116, 0.3);
+            transition: all 0.2s;
+        }
+
+        .ingredient-badge:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.2);
+        }
+
+        .ingredient-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .ingredient-text {
+            flex: 1;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* ========================================
+       按摩卡片樣式
+       ======================================== */
+        .massage-item {
+            flex: 0 0 300px;
+            scroll-snap-align: start;
+            background: rgba(255, 255, 255, .90);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, .08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .massage-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .10);
+        }
+
+        .massage-gif-container {
+            width: 100%;
+            height: 200px;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .massage-gif-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .massage-info {
+            padding: 16px;
+        }
+
+        .massage-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .massage-duration {
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .massage-steps,
+        .massage-benefits {
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .massage-steps strong,
+        .massage-benefits strong {
+            display: block;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        .massage-steps p,
+        .massage-benefits p {
+            margin: 0;
+            color: var(--muted);
+            white-space: pre-line;
+        }
+
+        /* ========================================
+       手機版調整
+       ======================================== */
+        @media (max-width: 768px) {
+            .stage {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+            .detail-section {
+                padding: 80px 12px 40px;
+            }
+
+            .detail-content {
+                padding: 24px 16px;
+            }
+
+            .back-btn {
+                top: 16px;
+                left: 16px;
+                font-size: 13px;
+                padding: 10px 16px;
+            }
+
+            .massage-item {
+                flex: 0 0 280px;
+            }
+
+            /* A 區手機版調整 */
+            .section-card.card-a {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .score-circle {
+                width: 80px;
+                height: 80px;
+            }
+
+            .score-number {
+                font-size: 28px;
+            }
+
+            .quick-summary {
+                text-align: left;
+            }
+
+            /* B 區手機版調整 */
+            .section-card.card-b {
+                flex-direction: column-reverse;
+                /* 內容在上，雷達圖在下 */
+            }
+
+            .card-b .radar-preview {
+                width: 100%;
+                max-width: 200px;
+                height: 150px;
+                margin: 0 auto 16px auto;
+                /* 下方留間距 */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ========================================
+       總覽頁面
+       ======================================== -->
+    <div id="overview-page">
+        <!-- 浮動式小圖示 (取代原本的 Header) -->
+        <button class="floating-home-btn" onclick="window.location.href='index.html'" title="返回首頁">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+        </button>
+
+        <div class="stage">
+            <div class="card">
+                <div class="card-head">
+                    <div>
+                        <div class="title">您的膚況分析報告</div>
+                        <div class="sub">點擊任一區域查看詳細資訊</div>
+                    </div>
+                </div>
+
+                <div class="body">
+                    <!-- 4個區域卡片 -->
+                    <div class="overview-grid">
+                        <!-- A區 - 活力氣色指南 -->
+                        <div class="section-card card-a" onclick="showDetail('section-a')">
+                            <div class="card-left">
+                                <!-- 使用者照片預覽 -->
+                                <img id="user-photo-overview"
+                                    style="width:90px; height:90px; border-radius:50%; object-fit:cover; display:none; margin-bottom:8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"
+                                    alt="您的照片">
+                                <div class="score-circle">
+                                    <div class="score-number" id="overview-score-a">78</div>
+                                    <div class="score-label">氣色分數</div>
+                                </div>
+                            </div>
+                            <div class="card-right">
+                                <div class="section-title">A. 活力氣色指南</div>
+
+                                <!-- 正面評價摘要 -->
+                                <div class="quick-summary positive">
+                                    <span class="summary-icon">✨</span>
+                                    <span id="overview-positive-summary">氣色整體穩定，膚色均勻度良好</span>
+                                </div>
+
+                                <!-- 主要關注點 -->
+                                <div class="quick-summary attention">
+                                    <span class="summary-icon">⚠️</span>
+                                    <span id="overview-attention-summary">眼周區域略顯疲態</span>
+                                </div>
+
+                                <div class="section-badge">點擊查看完整分析 →</div>
+                            </div>
+                        </div>
+
+                        <!-- B區 - 智能膚況解析 -->
+                        <div class="section-card card-b" onclick="showDetail('section-b')">
+                            <!-- 左側：內容 -->
+                            <div class="card-left">
+                                <div class="section-title">B. 智能膚況解析</div>
+
+                                <!-- Top 2 問題徽章 -->
+                                <div class="top-issues-badges" id="top-issues-badges">
+                                    <!-- 動態渲染 -->
+                                    <div class="issue-badge severe">
+                                        <span class="badge-icon">🔴</span>
+                                        <span class="badge-name">黑眼圈</span>
+                                        <span class="badge-score">(7.8)</span>
+                                    </div>
+                                    <div class="issue-badge warning">
+                                        <span class="badge-icon">🟠</span>
+                                        <span class="badge-name">斑</span>
+                                        <span class="badge-score">(6.9)</span>
+                                    </div>
+                                </div>
+
+                                <div class="section-badge">點擊查看詳情 →</div>
+                            </div>
+
+                            <!-- 右側：雷達圖 -->
+                            <div class="radar-preview">
+                                <canvas id="radar-chart-overview" width="200" height="150"
+                                    style="display:block; margin:0 auto;"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- C區 - 由內而外養膚 -->
+                        <div class="section-card" onclick="showDetail('section-c')">
+                            <div class="section-title">C. 由內而外養膚</div>
+
+                            <!-- 生活建議徽章 -->
+                            <div class="lifestyle-badges" id="lifestyle-badges">
+                                <!-- 動態渲染 -->
+                                <div class="advice-badge">
+                                    <span class="advice-icon">🥗</span>
+                                    <span class="advice-text">營養：增加蔬果、減少油炸</span>
+                                </div>
+                                <div class="advice-badge">
+                                    <span class="advice-icon">😴</span>
+                                    <span class="advice-text">作息：每晚 7-8 小時睡眠</span>
+                                </div>
+                                <div class="advice-badge">
+                                    <span class="advice-icon">🏃</span>
+                                    <span class="advice-text">運動：每週至少 3 次運動</span>
+                                </div>
+                            </div>
+
+                            <div class="section-badge">點擊查看詳情 →</div>
+                        </div>
+
+                        <!-- D區 - 智慧配方 -->
+                        <div class="section-card" onclick="showDetail('section-d')">
+                            <div class="section-title">D. 智慧配方</div>
+
+                            <!-- 推薦成分徽章 (動態渲染) -->
+                            <div class="ingredients-badges" id="ingredients-badges-overview">
+                                <!-- 預設顯示,會被 JavaScript 替換 -->
+                                <div class="ingredient-badge">
+                                    <span class="ingredient-icon">💊</span>
+                                    <span class="ingredient-text">針對黑眼圈：咖啡因</span>
+                                </div>
+                                <div class="ingredient-badge">
+                                    <span class="ingredient-icon">✨</span>
+                                    <span class="ingredient-text">針對斑：維生素C</span>
+                                </div>
+                            </div>
+
+                            <div class="section-badge">點擊查看詳情 →</div>
+                        </div>
+                    </div>
+
+                    <!-- 儲存報告按鈕 -->
+                    <button class="save-report-btn" onclick="saveToLine()">
+                        儲存我的報告
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+       詳情頁面 - 全螢幕滾動
+       ======================================== -->
+    <div id="detail-page" class="detail-container">
+        <button class="back-btn" onclick="backToOverview()">← 返回總覽</button>
+
+        <!-- A區詳情 - 活力氣色指南 -->
+        <div class="detail-section" data-section="llm_analysis">
+            <div class="detail-content">
+                <h2 style="margin-top:0;">A. 活力氣色指南</h2>
+
+                <!-- 使用者照片 -->
+                <div style="text-align:center; margin:20px 0;">
+                    <img id="user-photo-a"
+                        style="max-width:100%; max-height:300px; border-radius:16px; display:none;" />
+                    <div style="font-size:13px; color:rgba(24,11,10,.60); margin-top:8px;">您的拍攝照片</div>
+                </div>
+
+                <!-- AI 診斷 -->
+                <div class="massage-card">
+                    <h3>💬 AI 氣色診斷</h3>
+
+                    <!-- 正面評價 -->
+                    <div class="diagnosis-positive">
+                        <p id="ai-positive-feedback">您的氣色整體穩定，膚色均勻度良好，顯示出良好的作息與保養習慣。光澤度適中，整體呈現健康的自然光感。</p>
+                    </div>
+
+                    <!-- 問題分析 -->
+                    <div class="diagnosis-problems">
+                        <h4>需要關注的部分</h4>
+                        <p id="ai-problem-analysis">眼周區域略顯疲態，建議加強保濕與按摩促進循環。T 字部位油脂分泌稍多，可調整清潔頻率並選用清爽型保養品。</p>
+                    </div>
+                </div>
+
+
+                <!-- 推薦按摩 -->
+                <div class="massage-card">
+                    <h3>🌸 推薦按摩</h3>
+                    <div class="horizontal-scroll" id="massage-list">
+                        <!-- 動態渲染按摩卡片 -->
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-hint">往下滑動查看膚況分析 ↓</div>
+        </div>
+
+        <!-- B區詳情 - 智能膚況解析 -->
+        <div class="detail-section" data-section="model_detection">
+            <div class="detail-content">
+                <h2 style="margin-top:0;">B. 智能膚況解析</h2>
+
+                <!-- 標註圖片 -->
+                <div style="text-align:center; margin:20px 0;">
+                    <!-- Loading 提示 -->
+                    <div id="mask-loading"
+                        style="padding:60px 20px; background:rgba(0,0,0,0.02); border-radius:16px; color:var(--muted);">
+                        <div style="font-size:24px; margin-bottom:12px;">⏳</div>
+                        <div style="font-size:14px;">AI 正在分析您的膚況...</div>
+                        <div style="font-size:12px; margin-top:8px; opacity:0.7;">標註圖片生成中</div>
+                    </div>
+                    <!-- 遮罩圖片 -->
+                    <img id="annotated-photo"
+                        style="max-width:100%; max-height:300px; border-radius:16px; display:none;" alt="AI 膚況標註圖" />
+                    <div style="font-size:13px; color:rgba(24,11,10,.60); margin-top:8px;">問題區域標註圖</div>
+                </div>
+
+                <!-- 五角雷達圖 -->
+                <div
+                    style="background:rgba(255,255,255,.80); border-radius:16px; padding:20px; margin:20px 0; text-align:center;">
+                    <h3 style="text-align:center;">五角分析圖</h3>
+                    <div style="display:flex; justify-content:center; margin:20px 0;">
+                        <canvas id="radar-chart" width="300" height="250" style="max-width:100%;"></canvas>
+                    </div>
+                    <div style="font-size:12px; color:rgba(24,11,10,.60); margin-top:12px; text-align:center;">
+                        5 項指標: 細紋、斑、痘痘、粉刺、黑眼圈<br>
+                        <span style="color:#dc2626;">⚠️ 數值越大表示問題越嚴重</span>
+                    </div>
+                </div>
+
+                <!-- 最嚴重的 2 個問題 -->
+                <div class="massage-card">
+                    <h3>主要問題 (最嚴重的 2 項)</h3>
+                    <div id="top-issues">
+                        <!-- 動態渲染 Top 2 問題 -->
+                    </div>
+
+
+                    <!-- 溫馨提醒 -->
+                    <p
+                        style="margin-top:20px; text-align:center; font-size:14px; color:rgba(24,11,10,.70); line-height:1.6;">
+                        💡 別擔心!我們為您準備了從生活到保養的完整改善建議
+                    </p>
+                </div>
+            </div>
+            <div class="scroll-hint">往下滑動查看飲食建議 ↓</div>
+        </div>
+
+        <!-- C區詳情 - 由內而外養膚 -->
+        <div class="detail-section" data-section="diet_advice">
+            <div class="detail-content">
+                <h2 style="margin-top:0;">C. 由內而外養膚</h2>
+
+                <!-- 營養補充 -->
+                <div class="massage-card">
+                    <h3>營養補充建議</h3>
+                    <ul style="line-height:1.8;" id="nutrition-list">
+                        <li>深綠色蔬菜 (菠菜、羽衣甘藍)</li>
+                        <li>Omega-3 食物 (鮭魚、核桃)</li>
+                        <li>維生素 C 水果 (奇異果、柑橘)</li>
+                        <li>堅果與全穀類</li>
+                    </ul>
+                </div>
+
+                <!-- 作息調整 -->
+                <div class="massage-card">
+                    <h3>作息調整建議</h3>
+                    <p id="sleep-detail">建議固定就寢時間,每晚睡眠 7-8 小時,連續 7 天觀察氣色變化。</p>
+                </div>
+
+                <!-- 生活習慣 -->
+                <div class="massage-card">
+                    <h3>生活習慣改善</h3>
+                    <p id="exercise-detail">保持規律運動,每週至少 3 次,每次 30 分鐘。避免過度曝曬,做好防曬措施。</p>
+                </div>
+            </div>
+            <div class="scroll-hint">往下滑動查看產品推薦 ↓</div>
+        </div>
+
+        <!-- D區詳情 - 智慧配方 -->
+        <div class="detail-section" data-section="product_recommendation">
+            <div class="detail-content">
+                <h2 style="margin-top:0;">D. 智慧配方</h2>
+
+                <!-- 針對問題 A 的成分 -->
+                <div class="massage-card">
+                    <h3>針對痘痘問題</h3>
+                    <p><strong>主攻手:</strong> 水楊酸</p>
+                    <p><strong>核心成分:</strong> 茶樹精油、煙醯胺</p>
+                    <p style="font-size:13px; color:rgba(24,11,10,.70);">
+                        水楊酸能深入毛孔,溶解油脂和角質,有效改善痘痘問題。
+                    </p>
+                </div>
+
+                <!-- 針對問題 B 的成分 -->
+                <div class="massage-card">
+                    <h3>針對細紋問題</h3>
+                    <p><strong>主攻手:</strong> 視黃醇 (A醇)</p>
+                    <p><strong>核心成分:</strong> 玻尿酸、胜肽</p>
+                    <p style="font-size:13px; color:rgba(24,11,10,.70);">
+                        視黃醇能促進膠原蛋白生成,減少細紋和皺紋。
+                    </p>
+                </div>
+
+                <!-- 商品推薦 (6個,橫向滑動) -->
+                <div class="massage-card">
+                    <h3>精選產品推薦</h3>
+                    <div class="horizontal-scroll" id="product-list">
+                        <!-- 產品 1 -->
+                        <div class="product-card">
+                            <img class="product-image"
+                                src="https://via.placeholder.com/240x180/D4A574/FFFFFF?text=Product+1" alt="產品圖片 1">
+                            <div class="product-info">
+                                <div class="product-brand">品牌名稱 A</div>
+                                <div class="product-name">水楊酸淨痘精華</div>
+                                <div class="product-ingredient">含有: 水楊酸、茶樹精油</div>
+                                <div class="product-links">
+                                    <a href="#" class="product-link">前往官網 →</a>
+                                    <a href="#" class="product-link">前往 momo →</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 產品 2 -->
+                        <div class="product-card">
+                            <img class="product-image"
+                                src="https://via.placeholder.com/240x180/E8D5B7/FFFFFF?text=Product+2" alt="產品圖片 2">
+                            <div class="product-info">
+                                <div class="product-brand">品牌名稱 B</div>
+                                <div class="product-name">A醇抗皺精華液</div>
+                                <div class="product-ingredient">含有: 視黃醇、玻尿酸</div>
+                                <div class="product-links">
+                                    <a href="#" class="product-link">前往官網 →</a>
+                                    <a href="#" class="product-link">前往 momo →</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 產品 3 -->
+                        <div class="product-card">
+                            <img class="product-image"
+                                src="https://via.placeholder.com/240x180/D4A574/FFFFFF?text=Product+3" alt="產品圖片 3">
+                            <div class="product-info">
+                                <div class="product-brand">品牌名稱 C</div>
+                                <div class="product-name">煙醯胺亮白精華</div>
+                                <div class="product-ingredient">含有: 煙醯胺、維生素C</div>
+                                <div class="product-links">
+                                    <a href="#" class="product-link">前往官網 →</a>
+                                    <a href="#" class="product-link">前往 momo →</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 產品 4 -->
+                        <div class="product-card">
+                            <img class="product-image"
+                                src="https://via.placeholder.com/240x180/E8D5B7/FFFFFF?text=Product+4" alt="產品圖片 4">
+                            <div class="product-info">
+                                <div class="product-brand">品牌名稱 D</div>
+                                <div class="product-name">玻尿酸保濕精華</div>
+                                <div class="product-ingredient">含有: 玻尿酸、神經醯胺</div>
+                                <div class="product-links">
+                                    <a href="#" class="product-link">前往官網 →</a>
+                                    <a href="#" class="product-link">前往 momo →</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 產品 5 -->
+                        <div class="product-card">
+                            <img class="product-image"
+                                src="https://via.placeholder.com/240x180/D4A574/FFFFFF?text=Product+5" alt="產品圖片 5">
+                            <div class="product-info">
+                                <div class="product-brand">品牌名稱 E</div>
+                                <div class="product-name">胜肽緊緻精華</div>
+                                <div class="product-ingredient">含有: 六胜肽、膠原蛋白</div>
+                                <div class="product-links">
+                                    <a href="#" class="product-link">前往官網 →</a>
+                                    <a href="#" class="product-link">前往 momo →</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 產品 6 -->
+                        <div class="product-card">
+                            <img class="product-image"
+                                src="https://via.placeholder.com/240x180/E8D5B7/FFFFFF?text=Product+6" alt="產品圖片 6">
+                            <div class="product-info">
+                                <div class="product-brand">品牌名稱 F</div>
+                                <div class="product-name">維生素C淡斑精華</div>
+                                <div class="product-ingredient">含有: 維生素C、熊果素</div>
+                                <div class="product-links">
+                                    <a href="#" class="product-link">前往官網 →</a>
+                                    <a href="#" class="product-link">前往 momo →</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 儲存報告按鈕 -->
+                <button class="save-report-btn" onclick="saveToLine()">
+                    儲存我的報告
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script type="module">
+        import { drawRadar, safeJsonFetch, saveResult, loadResult, toast as appToast } from './js/utils.js';
+        // ========================================
+        // 工具函數
+        // ========================================
+        function toast(msg) {
+            appToast(msg);
+        }
+
+        // ========================================
+        // 頁面切換
+        // ========================================
+        function showDetail(sectionId) {
+            document.getElementById('overview-page').style.display = 'none';
+            document.getElementById('detail-page').classList.add('active');
+
+            // 滾動到對應區域
+            const sectionMap = {
+                'section-a': 0,
+                'section-b': 1,
+                'section-c': 2,
+                'section-d': 3
+            };
+
+            const sections = document.querySelectorAll('.detail-section');
+            const targetIndex = sectionMap[sectionId] || 0;
+            sections[targetIndex].scrollIntoView({ behavior: 'smooth' });
+
+            // 如果進入 B 區（智能膚況解析），繪製雷達圖
+            if (sectionId === 'section-b') {
+                // 使用 requestAnimationFrame 確保 DOM 完全渲染後才繪製
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        console.log('🎨 Now drawing radar chart for section B...');
+                        // TODO: 實作雷達圖繪製
+                        // const result = loadResult();
+                        // drawRadarChart(canvas, result);
+                    }, 100);
+                });
+            }
+
+            // GA 追蹤
+            if (sections[targetIndex] && sections[targetIndex].dataset.section) {
+                trackSection(sections[targetIndex].dataset.section);
+            }
+        }
+
+        function backToOverview() {
+            document.getElementById('detail-page').classList.remove('active');
+            document.getElementById('overview-page').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ========================================
+        // GA 追蹤
+        // ========================================
+        function trackSection(sectionName) {
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'section_view', {
+                    section_name: sectionName,
+                    page_path: '/result#' + sectionName
+                });
+            }
+            console.log('GA Track:', sectionName);
+        }
+
+        // Intersection Observer for auto-tracking
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const sectionName = entry.target.dataset.section;
+                    trackSection(sectionName);
+                }
+            });
+        }, {
+            threshold: 0.5
+        });
+
+        // 監聽所有詳情區域
+        document.querySelectorAll('.detail-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // ========================================
+        // 儲存報告到 LINE
+        // ========================================
+        function saveToLine() {
+            toast('正在儲存報告...');
+            // TODO: 實作 LINE 回傳功能
+            setTimeout(() => {
+                toast('報告已儲存!');
+            }, 1000);
+        }
+
+        // ========================================
+        // 載入資料
+        // ========================================
+        async function ensureResult() {
+            const cached = loadResult();
+            if (cached) return cached;
+
+            const res = await safeJsonFetch('./api/mock_result.json', {}, null);
+            if (res.ok && res.data) {
+                saveResult(res.data);
+                return res.data;
+            }
+            return null;
+        }
+
+        // 共用的雷達圖繪製函數
+        function drawRadarChart(canvas, result) {
+            if (!canvas) {
+                console.error('Canvas element not found!');
+                return;
+            }
+
+            // 確保 canvas 有正確的尺寸
+            if (!canvas.width || !canvas.height) {
+                canvas.width = canvas.id === 'radar-chart-overview' ? 200 : 400;
+                canvas.height = canvas.id === 'radar-chart-overview' ? 150 : 300;
+            }
+
+            // 取得 b_scores（皮膚問題分數），如果沒有就用預設值
+            let bScores = result?.b_scores;
+            if (!bScores) {
+                console.warn('No b_scores data, using default values');
+                bScores = {
+                    wrinkles: 50,
+                    spots: 60,
+                    acne: 55,
+                    comedones: 45,
+                    darkCircles: 65
+                };
+            }
+
+            const radarValues = {
+                "細紋": Number(bScores.wrinkles ?? 0) * 10,
+                "斑": Number(bScores.spots ?? 0) * 10,
+                "痘痘": Number(bScores.acne ?? 0) * 10,
+                "粉刺": Number(bScores.comedones ?? 0) * 10,
+                "黑眼圈": Number(bScores.darkCircles ?? 0) * 10
+            };
+
+            console.log('drawRadarChart called with:', {
+                canvasId: canvas.id,
+                canvasSize: { width: canvas.width, height: canvas.height },
+                bScores: bScores,
+                radarValues: radarValues
+            });
+
+            try {
+                drawRadar(canvas, radarValues);
+                console.log(`✅ Radar chart drawn successfully on ${canvas.id}!`);
+            } catch (e) {
+                console.error(`❌ Error drawing radar on ${canvas.id}:`, e);
+            }
+        }
+
+        // 為詳情頁 B 區繪製雷達圖
+        function renderRadar(result) {
+            const radar = document.getElementById('radar-chart');
+            drawRadarChart(radar, result);
+        }
+
+        async function loadData() {
+            console.log('loadData started');
+
+            // 從 localStorage 或 API 載入資料
+            const result = await ensureResult();
+            console.log('Result loaded:', result);
+
+            if (result && result.overall) {
+                // 更新 A 區分數
+                const scoreEl = document.getElementById('overview-score-a');
+                if (scoreEl) {
+                    scoreEl.textContent = result.overall;
+                }
+            }
+
+            // 🎨 新增：更新總覽頁面的摘要
+            updateOverviewSummary(result);
+
+            // 🎨 新增：更新 B 區 Top 2 問題徽章
+            updateTopIssuesBadges(result);
+
+            // 🎨 新增：更新 C 區生活建議
+            updateLifestyleAdvice(result);
+
+            // 載入使用者照片
+            const userPhoto = localStorage.getItem('user_photo');
+            if (userPhoto) {
+                const photoEl = document.getElementById('user-photo-a');
+                if (photoEl) {
+                    photoEl.src = userPhoto;
+                    photoEl.style.display = 'block';
+                }
+            }
+
+            // 繪製總覽頁面的雷達圖（總覽頁面是可見的）
+            setTimeout(() => {
+                const overviewRadar = document.getElementById('radar-chart-overview');
+                if (overviewRadar) {
+                    console.log('🎨 Drawing overview radar chart...');
+                    drawRadarChart(overviewRadar, result);
+                }
+            }, 100);
+
+            toast('資料載入完成');
+        }
+
+        // ========================================
+        // B 區 Top 2 問題徽章更新
+        // ========================================
+
+        /**
+         * 問題類型映射（中文名稱與圖示）
+         */
+        const ISSUE_MAP = {
+            wrinkles: { name: '細紋', icon: '📏' },
+            spots: { name: '斑', icon: '🟤' },
+            acne: { name: '痘痘', icon: '🔴' },
+            comedones: { name: '粉刺', icon: '⚪' },
+            darkCircles: { name: '黑眼圈', icon: '🌑' }
+        };
+
+        /**
+         * 根據分數判斷嚴重度等級
+         * @param {number} score - 分數 (1-5)
+         * @returns {string} 嚴重度等級: 'severe', 'warning', 'moderate'
+         */
+        function getSeverityLevel(score) {
+            if (score >= 7) return 'severe';      // 嚴重 (紅色)
+            if (score >= 5) return 'warning';     // 警告 (橘色)
+            return 'moderate';                     // 中等 (黃色)
+        }
+
+        /**
+         * 從 b_scores 中找出最嚴重的 2 個問題
+         * @param {object} bScores - 皮膚問題分數
+         * @returns {Array} Top 2 問題陣列
+         */
+        function getTopIssues(bScores) {
+            if (!bScores) return [];
+
+            const issues = Object.keys(ISSUE_MAP).map(key => ({
+                key: key,
+                name: ISSUE_MAP[key].name,
+                icon: ISSUE_MAP[key].icon,
+                score: Number(bScores[key] || 0)
+            }));
+
+            // 按分數排序，取前 2 名
+            return issues.sort((a, b) => b.score - a.score).slice(0, 2);
+        }
+
+        /**
+         * 更新總覽頁面的 B 區 Top 2 問題徽章
+         * @param {object} result - 分析結果資料
+         */
+        function updateTopIssuesBadges(result) {
+            const badgesContainer = document.getElementById('top-issues-badges');
+            const issuesCountEl = document.getElementById('issues-count');
+
+            if (!badgesContainer) {
+                console.warn('Top issues badges container not found');
+                return;
+            }
+
+            // 取得 b_scores
+            const bScores = result?.b_scores;
+            if (!bScores) {
+                console.warn('No b_scores data for top issues');
+                return;
+            }
+
+            // 找出 Top 2 問題
+            const topIssues = getTopIssues(bScores);
+
+            if (topIssues.length === 0) {
+                badgesContainer.innerHTML = '<div style="color: var(--muted); font-size: 13px;">暫無問題資料</div>';
+                return;
+            }
+
+            // 更新問題數量
+            if (issuesCountEl) {
+                issuesCountEl.textContent = topIssues.length;
+            }
+
+            // 渲染徽章
+            badgesContainer.innerHTML = topIssues.map(issue => {
+                const severity = getSeverityLevel(issue.score);
+                return `
+                    <div class="issue-badge ${severity}">
+                        <span class="badge-icon">${issue.icon}</span>
+                        <span class="badge-name">${issue.name}</span>
+                        <span class="badge-score">(${issue.score.toFixed(1)})</span>
+                    </div>
+                `;
+            }).join('');
+
+            console.log('✅ Top issues badges updated:', topIssues);
+        }
+
+        // ========================================
+        // C 區生活建議更新
+        // ========================================
+
+        /**
+         * 更新總覽頁面的 C 區生活建議
+         * @param {object} result - 分析結果資料
+         */
+        function updateLifestyleAdvice(result) {
+            const badgesContainer = document.getElementById('lifestyle-badges');
+            const nutritionList = document.getElementById('nutrition-list');
+            const sleepDetail = document.getElementById('sleep-detail');
+            const exerciseDetail = document.getElementById('exercise-detail');
+
+            // 取得 lifestyle_advice
+            const advice = result?.lifestyle_advice;
+            if (!advice) {
+                console.warn('No lifestyle advice data');
+                return;
+            }
+
+            // 1. 更新總覽頁面徽章
+            if (badgesContainer) {
+                badgesContainer.innerHTML = `
+                    <div class="advice-badge">
+                        <span class="advice-icon">🥗</span>
+                        <span class="advice-text">營養：${advice.nutrition?.summary || '均衡飲食'}</span>
+                    </div>
+                    <div class="advice-badge">
+                        <span class="advice-icon">😴</span>
+                        <span class="advice-text">作息：${advice.sleep?.summary || '充足睡眠'}</span>
+                    </div>
+                    <div class="advice-badge">
+                        <span class="advice-icon">🏃</span>
+                        <span class="advice-text">運動：${advice.exercise?.summary || '規律運動'}</span>
+                    </div>
+                `;
+            }
+
+            // 2. 更新詳情頁面內容
+            if (nutritionList && advice.nutrition?.items) {
+                nutritionList.innerHTML = advice.nutrition.items.map(item => `<li>${item}</li>`).join('');
+            }
+            if (sleepDetail && advice.sleep?.detail) {
+                sleepDetail.textContent = advice.sleep.detail;
+            }
+            if (exerciseDetail && advice.exercise?.detail) {
+                exerciseDetail.textContent = advice.exercise.detail;
+            }
+
+            console.log('✅ Lifestyle advice updated (Overview \u0026 Details)');
+        }
+
+        // ========================================
+        // 總覽頁面摘要更新
+        // ========================================
+
+        /**
+         * 智能提取摘要（取第一句話）
+         * @param {string} text - 完整文字
+         * @param {number} maxLength - 最大長度
+         * @returns {string} 摘要文字
+         */
+        function extractSummary(text, maxLength = 30) {
+            if (!text) return '';
+
+            // 移除前後空白
+            text = text.trim();
+
+            // 嘗試找到第一個句號、驚嘆號或問號
+            const sentenceEnd = text.search(/[。！？.!?]/);
+            if (sentenceEnd !== -1) {
+                text = text.substring(0, sentenceEnd);
+            }
+
+            // 如果還是太長，截斷並加上省略號
+            if (text.length > maxLength) {
+                text = text.substring(0, maxLength) + '...';
+            }
+
+            return text;
+        }
+
+        /**
+         * 更新總覽頁面的 A 區摘要
+         * @param {object} result - 分析結果資料
+         */
+        function updateOverviewSummary(result) {
+            const positiveSummaryEl = document.getElementById('overview-positive-summary');
+            const attentionSummaryEl = document.getElementById('overview-attention-summary');
+
+            if (!result) {
+                console.warn('No result data for overview summary');
+                return;
+            }
+
+            // 方案 1: 從 ai_diagnosis 取得資料（優先）
+            if (result.ai_diagnosis) {
+                const { positive_feedback, problem_analysis } = result.ai_diagnosis;
+
+                if (positiveSummaryEl && positive_feedback) {
+                    positiveSummaryEl.textContent = extractSummary(positive_feedback, 30);
+                }
+
+                if (attentionSummaryEl && problem_analysis) {
+                    attentionSummaryEl.textContent = extractSummary(problem_analysis, 25);
+                }
+            }
+            // 方案 2: 從 a_summary 和 a_issue 取得資料（備用）
+            else if (result.a_summary || result.a_issue) {
+                if (positiveSummaryEl && result.a_summary) {
+                    // 提取 a_summary 的前半部分（通常是正面評價）
+                    const parts = result.a_summary.split(/[；;但]/);
+                    const positivePart = parts[0] || result.a_summary;
+                    positiveSummaryEl.textContent = extractSummary(positivePart, 30);
+                }
+
+                if (attentionSummaryEl) {
+                    // 優先使用 a_issue_detail，否則使用 a_issue
+                    const issue = result.a_issue_detail || result.a_issue || '請保持良好習慣';
+                    attentionSummaryEl.textContent = extractSummary(issue, 25);
+                }
+            }
+            // 方案 3: 使用預設文字
+            else {
+                console.warn('Using default summary text');
+                if (positiveSummaryEl) {
+                    positiveSummaryEl.textContent = '氣色整體穩定，膚色均勻度良好';
+                }
+                if (attentionSummaryEl) {
+                    attentionSummaryEl.textContent = '眼周區域略顯疲態';
+                }
+            }
+
+            console.log('✅ Overview summary updated');
+        }
+
+
+        // loadResult 已從 utils.js import,不需要重複定義
+
+
+        // ========================================
+        // A 區：渲染 AI 診斷與按摩推薦
+        // ========================================
+
+        /**
+         * 渲染 AI 診斷內容
+         */
+        function renderAIDiagnosis(diagnosis) {
+            const positiveFeedback = document.getElementById('ai-positive-feedback');
+            const problemAnalysis = document.getElementById('ai-problem-analysis');
+
+            if (positiveFeedback && diagnosis && diagnosis.positive_feedback) {
+                positiveFeedback.textContent = diagnosis.positive_feedback;
+            }
+
+            if (problemAnalysis && diagnosis && diagnosis.problem_analysis) {
+                problemAnalysis.textContent = diagnosis.problem_analysis;
+            }
+        }
+
+        /**
+         * 渲染按摩推薦 (實際上是顯示 LLM 偵測到的行動建議)
+         */
+        async function renderMassageRecommendations(detectedIssues) {
+            const massageList = document.getElementById('massage-list');
+            if (!massageList) return;
+
+            // 如果沒有偵測結果,使用假資料
+            if (!detectedIssues || detectedIssues.length === 0) {
+                detectedIssues = [1, 2]; // 預設顯示問題 1 和 2
+            }
+
+            try {
+                // 載入 action-recommendations.json
+                const response = await fetch('./data/action-recommendations.json');
+                const data = await response.json();
+
+                // 根據偵測到的問題生成卡片
+                const cards = detectedIssues.map(issueId => {
+                    const action = data.actions[issueId];
+                    if (!action) return '';
+
+                    // 判斷媒體類型
+                    const mediaElement = action.mediaType === 'video'
+                        ? `<video class="massage-gif-img" autoplay loop muted playsinline>
+                             <source src="${action.mediaUrl}" type="video/mp4">
+                             您的瀏覽器不支援影片播放。
+                           </video>`
+                        : `<img src="${action.mediaUrl}" 
+                               alt="${action.targetIssue}" 
+                               class="massage-gif-img">`;
+
+                    return `
+                        <div class="massage-item">
+                            <div class="massage-gif-container">
+                                ${mediaElement}
+                            </div>
+                            <div class="massage-info">
+                                <div class="massage-name">${action.targetIssue}</div>
+                                <div class="massage-duration">⏱️ 2 分鐘</div>
+                                <div class="massage-steps">
+                                    <strong>動作說明：</strong>
+                                    <p>${action.actionName}</p>
+                                </div>
+                                <div class="massage-benefits">
+                                    <strong>效果：</strong>
+                                    <p>${action.description}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                massageList.innerHTML = cards;
+                console.log('✅ 推薦按摩已渲染,顯示問題:', detectedIssues);
+            } catch (error) {
+                console.error('❌ 載入行動建議失敗:', error);
+                // 顯示錯誤訊息
+                massageList.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">載入失敗,請重新整理頁面</div>';
+            }
+        }
+
+        /**
+         * 渲染 B 區 Top 2 問題
+         */
+        function renderTopIssues(topIssues) {
+            const container = document.getElementById('top-issues');
+            if (!container) return;
+
+            // 如果沒有資料,使用假資料
+            if (!topIssues || topIssues.length === 0) {
+                topIssues = [
+                    {
+                        name: "黑眼圈",
+                        score: 7.8,
+                        llm_analysis: "眼周區域循環不佳,建議加強保濕與按摩促進循環。"
+                    },
+                    {
+                        name: "斑",
+                        score: 6.9,
+                        llm_analysis: "臉頰區域色素沉澱,建議使用美白產品並做好防曬。"
+                    }
+                ];
+            }
+
+            // 根據分數判斷嚴重度 (1-5 分制)
+            const getSeverityInfo = (score) => {
+                if (score >= 3.5) return { label: '嚴重', color: '#dc2626', emoji: '🔴' };
+                if (score >= 2) return { label: '中等', color: '#f59e0b', emoji: '🟠' };
+                return { label: '輕微', color: '#10b981', emoji: '🟢' };
+            };
+
+            // 生成 HTML
+            const html = topIssues.map((issue, index) => {
+                const severity = getSeverityInfo(issue.score);
+                return `
+                    <div style="padding:12px; background:rgba(212,165,116,.08); border-radius:12px; margin:8px 0; border-left:4px solid ${severity.color};">
+                        <strong>問題 ${index + 1}: ${issue.name}</strong><br>
+                        嚴重度: <strong style="color:${severity.color};">${severity.emoji} ${severity.label} (${issue.score}/5)</strong><br>
+                        <span style="font-size:12px; color:rgba(24,11,10,.70);">${issue.llm_analysis}</span>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+            console.log('✅ Top 2 問題已渲染');
+        }
+
+
+        function loadSectionAData(result) {
+            console.log('🚀 loadSectionAData 開始執行...');
+
+            // 如果沒有傳入 result,嘗試從 localStorage 讀取
+            if (!result) {
+                const keys = ["result", "skinapp_result", "ai_result", "analysis_result"];
+                for (const k of keys) {
+                    const raw = localStorage.getItem(k);
+                    if (raw) {
+                        try {
+                            result = JSON.parse(raw);
+                            console.log(`✅ 從 localStorage.${k} 讀取到資料`);
+                            break;
+                        } catch (e) {
+                            console.error('Parse error:', e);
+                        }
+                    }
+                }
+            }
+
+            // 渲染 AI 診斷（如果有資料）
+            if (result && result.ai_diagnosis) {
+                renderAIDiagnosis(result.ai_diagnosis);
+            }
+
+            // 取得 LLM 偵測結果 (通常是 2 個問題)
+            const detectedIssues = result?.llm_detection?.detectedIssues || [1, 2];
+
+            // 渲染推薦按摩,傳入偵測到的問題 ID
+            renderMassageRecommendations(detectedIssues);
+        }
+
+        /**
+         * 載入 B 區資料
+         */
+        function loadSectionBData(result) {
+            console.log('🚀 loadSectionBData 開始執行...');
+
+            // 如果沒有傳入 result,嘗試從 localStorage 讀取
+            if (!result) {
+                const keys = ["result", "skinapp_result", "ai_result"];
+                for (const k of keys) {
+                    const raw = localStorage.getItem(k);
+                    if (raw) {
+                        try {
+                            result = JSON.parse(raw);
+                            console.log(`✅ 從 localStorage.${k} 讀取到資料`);
+                            break;
+                        } catch (e) {
+                            console.error('Parse error:', e);
+                        }
+                    }
+                }
+            }
+
+            if (!result) {
+                console.warn('⚠️ localStorage 中沒有資料,使用假資料');
+                // 使用假資料
+                result = {
+                    b_scores: {
+                        darkCircles: 7.8,
+                        acne: 6.1,
+                        comedones: 5.4,
+                        wrinkles: 4.2,
+                        spots: 6.9
+                    },
+                    b_top_issues: [
+                        {
+                            name: "黑眼圈",
+                            score: 7.8,
+                            llm_analysis: "眼周區域循環不佳,建議加強保濕與按摩促進循環。"
+                        },
+                        {
+                            name: "斑",
+                            score: 6.9,
+                            llm_analysis: "臉頰區域色素沉澱,建議使用美白產品並做好防曬。"
+                        }
+                    ]
+                };
+            }
+
+            // 繪製雷達圖
+            const radarCanvas = document.getElementById('radar-chart');
+            console.log('📊 雷達圖 canvas:', radarCanvas);
+
+            if (radarCanvas) {
+                console.log('🎨 準備繪製雷達圖...');
+                drawRadarChart(radarCanvas, result);
+            } else {
+                console.error('❌ 找不到 radar-chart canvas 元素!');
+            }
+
+            // 繪製總覽頁的小雷達圖
+            const radarOverviewCanvas = document.getElementById('radar-chart-overview');
+            if (radarOverviewCanvas) {
+                console.log('🎨 準備繪製總覽頁雷達圖...');
+                drawRadarChart(radarOverviewCanvas, result);
+            }
+
+            // 渲染 Top 2 問題
+            console.log('📋 準備渲染 Top 2 問題...');
+            if (result && result.b_top_issues) {
+                renderTopIssues(result.b_top_issues);
+            } else {
+                renderTopIssues(); // 使用假資料
+            }
+
+            console.log('✅ loadSectionBData 執行完成');
+        }
+
+        /**
+         * 載入 C 區資料 (生活建議)
+         */
+        function loadSectionCData(result) {
+            console.log('🚀 loadSectionCData 開始執行...');
+
+            // 如果沒有傳入 result,嘗試從 localStorage 讀取
+            if (!result) {
+                const keys = ["result", "skinapp_result", "ai_result"];
+                for (const k of keys) {
+                    const raw = localStorage.getItem(k);
+                    if (raw) {
+                        try {
+                            result = JSON.parse(raw);
+                            console.log(`✅ 從 localStorage.${k} 讀取到資料`);
+                            break;
+                        } catch (e) {
+                            console.error('Parse error:', e);
+                        }
+                    }
+                }
+            }
+
+            // 取得生活建議資料
+            const lifestyleAdvice = result?.lifestyle_advice;
+
+            if (!lifestyleAdvice) {
+                console.warn('⚠️ 沒有 lifestyle_advice 資料,使用假資料');
+                return; // 使用 HTML 中的假資料
+            }
+
+            // 渲染營養補充建議
+            if (lifestyleAdvice.nutrition && lifestyleAdvice.nutrition.items) {
+                const nutritionList = document.getElementById('nutrition-list');
+                if (nutritionList) {
+                    nutritionList.innerHTML = lifestyleAdvice.nutrition.items
+                        .map(item => `<li>${item}</li>`)
+                        .join('');
+                    console.log('✅ 營養補充建議已渲染');
+                }
+            }
+
+            // 渲染作息調整建議
+            if (lifestyleAdvice.sleep && lifestyleAdvice.sleep.detail) {
+                const sleepDetail = document.getElementById('sleep-detail');
+                if (sleepDetail) {
+                    sleepDetail.textContent = lifestyleAdvice.sleep.detail;
+                    console.log('✅ 作息調整建議已渲染');
+                }
+            }
+
+            // 渲染生活習慣改善
+            if (lifestyleAdvice.exercise && lifestyleAdvice.exercise.detail) {
+                const exerciseDetail = document.getElementById('exercise-detail');
+                if (exerciseDetail) {
+                    exerciseDetail.textContent = lifestyleAdvice.exercise.detail;
+                    console.log('✅ 生活習慣改善已渲染');
+                }
+            }
+
+            console.log('✅ loadSectionCData 執行完成');
+        }
+
+        /**
+         * 載入 D 區資料 (產品推薦)
+         */
+        function loadSectionDData(result) {
+            console.log('🚀 loadSectionDData 開始執行...');
+
+            // 取得產品推薦資料
+            const productRec = result?.d_product_recommendations;
+
+            if (!productRec) {
+                console.warn('⚠️ 沒有產品推薦資料,使用假資料');
+                return; // 使用 HTML 中的假資料
+            }
+
+            // 渲染總覽頁的成分摘要
+            if (productRec.ingredients && productRec.ingredients.length > 0) {
+                renderIngredientsOverview(productRec.ingredients);
+            }
+
+            // 渲染詳情頁的成分說明
+            if (productRec.ingredients && productRec.ingredients.length > 0) {
+                renderIngredients(productRec.ingredients);
+            }
+
+            // 渲染產品卡片
+            if (productRec.products && productRec.products.length > 0) {
+                renderProducts(productRec.products);
+            }
+
+            console.log('✅ loadSectionDData 執行完成');
+        }
+
+        /**
+         * 渲染總覽頁的成分摘要
+         */
+        function renderIngredientsOverview(ingredients) {
+            console.log('📝 開始渲染總覽頁成分摘要...', ingredients);
+
+            const container = document.getElementById('ingredients-badges-overview');
+            if (!container) {
+                console.error('❌ 找不到總覽頁成分容器');
+                return;
+            }
+
+            // 清空舊的內容
+            container.innerHTML = '';
+
+            // 成分圖示對應
+            const iconMap = {
+                '咖啡因': '☕',
+                '維生素C': '🍊',
+                '維生素K': '💊',
+                '煙醯胺': '✨',
+                '熊果素': '🌿',
+                '傳明酸': '💎',
+                '玻尿酸': '💧',
+                '視黃醇': '🌟',
+                '水楊酸': '🧪'
+            };
+
+            // 渲染每個成分
+            ingredients.forEach(ing => {
+                const icon = iconMap[ing.primary_ingredient] || '💊';
+                const badge = document.createElement('div');
+                badge.className = 'ingredient-badge';
+                badge.innerHTML = `
+                    <span class="ingredient-icon">${icon}</span>
+                    <span class="ingredient-text">針對${ing.issue_name}：${ing.primary_ingredient}</span>
+                `;
+                container.appendChild(badge);
+            });
+
+            console.log(`✅ 總覽頁成分摘要已渲染 (${ingredients.length} 個)`);
+        }
+
+        /**
+         * 渲染成分說明
+         */
+        function renderIngredients(ingredients) {
+            console.log('📝 開始渲染成分說明...', ingredients);
+
+            // 找到 D 區詳情頁的第一個位置 (成分說明區)
+            const detailSection = document.querySelector('[data-section="product_recommendation"] .detail-content');
+            if (!detailSection) {
+                console.error('❌ 找不到 D 區詳情容器');
+                return;
+            }
+
+            // 移除舊的成分卡片 (保留標題和產品列表)
+            const oldCards = detailSection.querySelectorAll('.massage-card');
+            oldCards.forEach((card, index) => {
+                // 只移除前面的成分卡片,保留最後一個產品列表卡片
+                if (index < oldCards.length - 1) {
+                    card.remove();
+                }
+            });
+
+            // 在標題後面插入新的成分卡片
+            const h2 = detailSection.querySelector('h2');
+            ingredients.forEach(ing => {
+                const card = document.createElement('div');
+                card.className = 'massage-card';
+                card.innerHTML = `
+                    <h3>針對${ing.issue_name}問題</h3>
+                    <p><strong>主攻手:</strong> ${ing.primary_ingredient}</p>
+                    <p><strong>核心成分:</strong> ${ing.core_ingredients.join('、')}</p>
+                    <p style="font-size:13px; color:rgba(24,11,10,.70);">
+                        ${ing.description}
+                    </p>
+                `;
+                h2.insertAdjacentElement('afterend', card);
+            });
+
+            console.log('✅ 成分說明已渲染');
+        }
+
+        /**
+         * 渲染產品卡片
+         */
+        function renderProducts(products) {
+            console.log('📝 開始渲染產品卡片...', products);
+
+            const container = document.getElementById('product-list');
+            if (!container) {
+                console.error('❌ 找不到產品列表容器');
+                return;
+            }
+
+            // 清空舊的產品卡片
+            container.innerHTML = '';
+
+            // 渲染新的產品卡片
+            products.forEach((product, index) => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <img class="product-image" 
+                         src="${product.image_url || 'https://via.placeholder.com/240x180/D4A574/FFFFFF?text=Product'}" 
+                         alt="${product.name}"
+                         onerror="this.src='https://via.placeholder.com/240x180/D4A574/FFFFFF?text=No+Image'">
+                    <div class="product-info">
+                        <div class="product-brand">${product.brand || '品牌名稱'}</div>
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-ingredient">
+                            ${product.ingredients ? '含有: ' + product.ingredients.slice(0, 3).join('、') : ''}
+                        </div>
+                        <div class="product-links">
+                            <a href="${product.product_url || '#'}" 
+                               target="_blank" 
+                               class="product-link"
+                               onclick="trackProductClick(${product.id || index})">
+                                前往官網 →
+                            </a>
+                            <a href="${product.momo_url || 'https://www.momoshop.com.tw/'}" 
+                               target="_blank" 
+                               class="product-link">
+                                前往 momo →
+                            </a>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            console.log(`✅ 已渲染 ${products.length} 個產品卡片`);
+        }
+
+        /**
+         * 追蹤產品點擊 (GA4)
+         */
+        function trackProductClick(productId) {
+            console.log('📊 追蹤產品點擊:', productId);
+            // TODO: 實作 GA4 追蹤
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'product_click', {
+                    'product_id': productId,
+                    'session_id': localStorage.getItem('session_id')
+                });
+            }
+        }
+
+
+        /**
+         * 從 API 或 localStorage 載入結果
+         */
+        async function loadResultData() {
+            console.log('🚀 開始載入結果資料...');
+
+            try {
+                // 動態 import utils.js 的函數
+                const { getAnalysisResult, pollAnalysisResult } = await import('./js/utils.js');
+                const { API_CONFIG } = await import('./js/api-config.js');
+
+                // 1. 檢查是否有 session_id
+                const sessionId = localStorage.getItem('session_id');
+
+                if (!sessionId) {
+                    console.warn('⚠️ 找不到 session_id,嘗試從 localStorage 讀取');
+                    return loadFromLocalStorage();
+                }
+
+                console.log('📡 Session ID:', sessionId);
+
+                // 2. 開發模式: 直接使用 mock 資料
+                if (API_CONFIG.DEV_MODE) {
+                    console.log('🔧 開發模式: 使用 mock 資料');
+                    const result = await getAnalysisResult(sessionId);
+                    return result;
+                }
+
+                // 3. 正式模式: 使用輪詢取得結果
+                return new Promise((resolve, reject) => {
+                    pollAnalysisResult({
+                        sessionId: sessionId,
+                        timeout: API_CONFIG.TIMEOUT || 30000,
+                        interval: API_CONFIG.POLL_INTERVAL || 2000,
+                        onProgress: ({ elapsed, timeout, status }) => {
+                            const percent = Math.round((elapsed / timeout) * 100);
+                            console.log(`⏳ 輪詢中... ${percent}% (${status})`);
+                        },
+                        onComplete: (result) => {
+                            console.log('✅ 分析結果已取得', result);
+                            resolve(result);
+                        },
+                        onError: (message) => {
+                            console.error('❌ 輪詢失敗:', message);
+                            // 降級使用 localStorage
+                            const fallback = loadFromLocalStorage();
+                            resolve(fallback);
+                        }
+                    });
+                });
+
+            } catch (error) {
+                console.error('❌ 載入結果失敗:', error);
+                return loadFromLocalStorage();
+            }
+        }
+
+        /**
+         * 從 localStorage 讀取資料 (降級方案)
+         */
+        function loadFromLocalStorage() {
+            console.log('📦 從 localStorage 讀取資料...');
+
+            const keys = ["result", "skinapp_result", "ai_result", "analysis_result"];
+            for (const k of keys) {
+                const raw = localStorage.getItem(k);
+                if (raw) {
+                    try {
+                        const result = JSON.parse(raw);
+                        console.log(`✅ 從 localStorage.${k} 讀取成功`);
+                        return result;
+                    } catch (e) {
+                        console.error(`❌ 解析 localStorage.${k} 失敗:`, e);
+                    }
+                }
+            }
+
+            console.warn('⚠️ localStorage 中沒有資料,將使用 HTML 中的假資料');
+            return null;
+        }
+
+        /**
+         * 載入所有區塊資料
+         */
+        function loadAllSections(result) {
+            if (!result) {
+                console.warn('⚠️ 沒有資料,使用 HTML 中的假資料');
+                return;
+            }
+
+            console.log('🎨 開始渲染所有區塊...');
+            loadSectionAData(result);
+            loadSectionBData(result);
+            loadSectionCData(result);
+            loadSectionDData(result);
+            console.log('✅ 所有區塊渲染完成');
+        }
+
+        // 頁面載入時執行
+        window.addEventListener('DOMContentLoaded', async () => {
+            console.log('📄 頁面載入完成,開始初始化...');
+
+            // 載入結果資料
+            const result = await loadResultData();
+
+            // 渲染所有區塊
+            loadAllSections(result);
+        });
+
+        window.showDetail = showDetail;
+        window.backToOverview = backToOverview;
+        window.saveToLine = saveToLine;
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 整合測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            background: #D4A574;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: #C09464;
+        }
+
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 API 整合測試頁面</h1>
+
+    <div class="test-section">
+        <h2>1. 測試 Session ID</h2>
+        <button onclick="testSessionId()">設定 Session ID</button>
+        <button onclick="clearSessionId()">清除 Session ID</button>
+        <div id="session-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. 測試載入結果</h2>
+        <button onclick="testLoadResult()">載入結果資料</button>
+        <div id="load-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. 測試 Mock 資料</h2>
+        <button onclick="testMockData()">載入 Mock 資料</button>
+        <div id="mock-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. 快速導航</h2>
+        <button onclick="location.href='result_new.html'">前往結果頁</button>
+        <button onclick="location.href='survey_new.html'">前往問卷頁</button>
+        <button onclick="location.href='analyze.html'">前往拍照頁</button>
+    </div>
+
+    <script>
+        function testSessionId() {
+            const sessionId = 'test-session-' + Date.now();
+            localStorage.setItem('session_id', sessionId);
+            document.getElementById('session-result').textContent =
+                '✅ Session ID 已設定:\n' + sessionId;
+        }
+
+        function clearSessionId() {
+            localStorage.removeItem('session_id');
+            document.getElementById('session-result').textContent =
+                '🗑️ Session ID 已清除';
+        }
+
+        async function testLoadResult() {
+            const resultDiv = document.getElementById('load-result');
+            resultDiv.textContent = '⏳ 載入中...';
+
+            try {
+                const response = await fetch('./api/mock_result.json');
+                const data = await response.json();
+
+                resultDiv.textContent =
+                    '✅ 載入成功!\n\n' +
+                    'A 區資料: ' + (data.ai_diagnosis ? '✓' : '✗') + '\n' +
+                    'B 區資料: ' + (data.b_scores ? '✓' : '✗') + '\n' +
+                    'C 區資料: ' + (data.lifestyle_advice ? '✓' : '✗') + '\n' +
+                    'D 區資料: ' + (data.d_product_recommendations ? '✓' : '✗') + '\n\n' +
+                    '完整資料:\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.textContent = '❌ 載入失敗:\n' + error.message;
+            }
+        }
+
+        async function testMockData() {
+            const resultDiv = document.getElementById('mock-result');
+            resultDiv.textContent = '⏳ 載入中...';
+
+            try {
+                const response = await fetch('./api/mock_result.json');
+                const data = await response.json();
+
+                // 儲存到 localStorage
+                localStorage.setItem('result', JSON.stringify(data));
+
+                resultDiv.textContent =
+                    '✅ Mock 資料已載入並儲存到 localStorage!\n\n' +
+                    '現在可以前往結果頁測試。';
+            } catch (error) {
+                resultDiv.textContent = '❌ 載入失敗:\n' + error.message;
+            }
+        }
+
+        // 頁面載入時顯示當前狀態
+        window.addEventListener('DOMContentLoaded', () => {
+            const sessionId = localStorage.getItem('session_id');
+            if (sessionId) {
+                document.getElementById('session-result').textContent =
+                    '當前 Session ID:\n' + sessionId;
+            } else {
+                document.getElementById('session-result').textContent =
+                    '尚未設定 Session ID';
+            }
+        });
+    </script>
+</body>
+
+</html>
