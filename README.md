@@ -19,58 +19,150 @@
 
 ## 🏗️ 系統架構
 
-```mermaid
-flowchart TB
-    subgraph User["👤 使用者端"]
-        LINE[LINE App]
-        LIFF[LIFF 網頁]
-    end
-    
-    subgraph Frontend["🎨 前端系統 - 第一組"]
-        Camera[拍照介面<br/>MediaPipe Face Mesh]
-        Survey[問卷頁面]
-        Result[結果展示頁<br/>A/B/C/D 四區]
-    end
-    
-    subgraph Backend["🤖 後端系統"]
-        subgraph AI["AI 分析 - 第二組"]
-            FaceMesh[MediaPipe<br/>Face Landmarks]
-            YOLO[YOLO 11N<br/>膚況偵測]
-            LLM_A[Gemini API<br/>氣色分析]
-        end
-        
-        subgraph Recommend["推薦系統 - 第三組"]
-            RuleEngine[Rule-based<br/>推薦引擎]
-            LLM_C[LLM<br/>生活建議生成]
-            ProductDB[(產品資料庫<br/>MySQL)]
-        end
-    end
-    
-    subgraph Data["📊 資料層"]
-        Crawler[爬蟲系統<br/>20+ 品牌]
-        MySQL[(MySQL<br/>分析記錄)]
-        GA[Google Analytics 4]
-    end
-    
-    LINE -->|開啟 LIFF| LIFF
-    LIFF --> Camera
-    Camera -->|Base64 圖片| FaceMesh
-    FaceMesh --> YOLO
-    YOLO -->|膚況結果| Result
-    FaceMesh -->|ROI 切割| LLM_A
-    LLM_A -->|氣色分析| Result
-    
-    Survey -->|問卷資料| RuleEngine
-    Survey -->|問卷資料| LLM_C
-    RuleEngine -->|成分推薦| ProductDB
-    ProductDB -->|產品清單| Result
-    LLM_C -->|生活建議| Result
-    
-    Crawler -->|商品資料| ProductDB
-    Result -->|儲存記錄| MySQL
-    Result -->|追蹤事件| GA
-    Result -->|回傳結果| LINE
-```
+<mxGraphModel dx="1025" dy="463" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="Group_LINE" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#E8F8F5;strokeColor=#1ABC9C;fontColor=#0E6655;fontStyle=1;rounded=1;shadow=1;" value="LINE 介面服務" vertex="1">
+      <mxGeometry height="160" width="180" x="40" y="40" as="geometry" />
+    </mxCell>
+    <mxCell id="Group_Frontend" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#F8F9FA;strokeColor=#ADB5BD;fontColor=#343A40;fontStyle=1;rounded=1;shadow=1;" value="前端與追蹤" vertex="1">
+      <mxGeometry height="160" width="560" x="260" y="40" as="geometry" />
+    </mxCell>
+    <mxCell id="Group_Core" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#FFF9E6;strokeColor=#F1C40F;fontColor=#7E5109;fontStyle=1;rounded=1;shadow=1;" value="核心邏輯 (雲端樞紐)" vertex="1">
+      <mxGeometry height="140" width="240" x="320" y="280" as="geometry" />
+    </mxCell>
+    <mxCell id="Group_AI" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#F4F6F6;strokeColor=#7F8C8D;fontColor=#2C3E50;fontStyle=1;rounded=1;shadow=1;" value="AI 服務" vertex="1">
+      <mxGeometry height="160" width="300" x="120" y="520" as="geometry" />
+    </mxCell>
+    <mxCell id="Group_Cloud" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#EBF5FB;strokeColor=#3498DB;fontColor=#154360;fontStyle=1;rounded=1;shadow=1;" value="雲端數據與媒體" vertex="1">
+      <mxGeometry height="160" width="300" x="460" y="520" as="geometry" />
+    </mxCell>
+    <mxCell id="LMAP" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2ECC71;strokeColor=#27AE60;fontColor=#FFFFFF;fontStyle=1;shadow=1;" value="LMAP&#xa;(LINE 訊息 API)" vertex="1">
+      <mxGeometry height="60" width="120" x="70" y="90" as="geometry" />
+    </mxCell>
+    <mxCell id="U" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#333333;fontStyle=1;shadow=1;" value="U&#xa;(LINE 使用者)" vertex="1">
+      <mxGeometry height="60" width="120" x="290" y="90" as="geometry" />
+    </mxCell>
+    <mxCell id="LIFF" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5ff;strokeColor=#85C1E9;fontStyle=1;shadow=1;" value="LIFF&#xa;(前端網頁)" vertex="1">
+      <mxGeometry height="60" width="120" x="480" y="90" as="geometry" />
+    </mxCell>
+    <mxCell id="GA4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FADBD8;strokeColor=#E74C3C;fontStyle=1;shadow=1;" value="GA4&#xa;(數據分析)" vertex="1">
+      <mxGeometry height="60" width="120" x="670" y="90" as="geometry" />
+    </mxCell>
+    <mxCell id="N8N" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4e1;strokeColor=#E67E22;strokeWidth=3;fontStyle=1;shadow=1;" value="N8N&#xa;(n8n 工作流)" vertex="1">
+      <mxGeometry height="60" width="120" x="380" y="330" as="geometry" />
+    </mxCell>
+    <mxCell id="YOLO" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D7BDE2;strokeColor=#8E44AD;fontColor=#FFFFFF;fontStyle=1;shadow=1;" value="YOLO&#xa;(模型服務)" vertex="1">
+      <mxGeometry height="60" width="120" x="150" y="580" as="geometry" />
+    </mxCell>
+    <mxCell id="Gemini" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D7BDE2;strokeColor=#8E44AD;fontColor=#FFFFFF;fontStyle=1;shadow=1;" value="Gemini&#xa;(Gemini API)" vertex="1">
+      <mxGeometry height="60" width="120" x="280" y="580" as="geometry" />
+    </mxCell>
+    <mxCell id="DB" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#AED6F1;strokeColor=#2980B9;fontStyle=1;shadow=1;" value="DB&#xa;(Cloud SQL)" vertex="1">
+      <mxGeometry height="70" width="100" x="490" y="570" as="geometry" />
+    </mxCell>
+    <mxCell id="GCS" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#AED6F1;strokeColor=#2980B9;fontStyle=1;shadow=1;" value="GCS&#xa;(Cloud Storage)" vertex="1">
+      <mxGeometry height="60" width="120" x="620" y="580" as="geometry" />
+    </mxCell>
+    <mxCell id="E_U_LIFF" edge="1" parent="1" source="U" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;startArrow=classic;endArrow=classic;strokeWidth=2;strokeColor=#555555;" target="LIFF">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="L_U_LIFF" connectable="0" parent="E_U_LIFF" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#FFFFFF;" value="LIFF 開發套件" vertex="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="E_U_LMAP" edge="1" parent="1" source="U" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;startArrow=classic;endArrow=classic;strokeWidth=2;strokeColor=#555555;" target="LMAP">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="L_U_LMAP" connectable="0" parent="E_U_LMAP" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#FFFFFF;" value="接收器 / 訊息介面" vertex="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="E_LIFF_GA4" edge="1" parent="1" source="LIFF" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;strokeWidth=2;strokeColor=#555555;" target="GA4">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="L_LIFF_GA4" connectable="0" parent="E_LIFF_GA4" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#FFFFFF;" value="JS HTTP" vertex="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="E_LIFF_N8N" edge="1" parent="1" source="LIFF" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2;strokeColor=#2980B9;" target="N8N">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="540" y="240" />
+          <mxPoint x="600" y="240" />
+          <mxPoint x="600" y="360" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="L_LIFF_N8N" connectable="0" parent="E_LIFF_N8N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#FFFFFF;fontColor=#2980B9;fontStyle=1" value="HTTPS Webhook" vertex="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="E_LMAP_N8N" edge="1" parent="1" source="LMAP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;startArrow=classic;endArrow=classic;strokeWidth=2;strokeColor=#27AE60;" target="N8N">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="130" y="360" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="L_LMAP_N8N" connectable="0" parent="E_LMAP_N8N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#FFFFFF;fontColor=#27AE60;fontStyle=1" value="API 呼叫" vertex="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="E_N8N_YOLO" edge="1" parent="1" source="N8N" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;startArrow=classic;endArrow=classic;strokeWidth=2;strokeColor=#8E44AD;" target="YOLO">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="390" y="470" />
+          <mxPoint x="210" y="470" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="L_N8N_YOLO" connectable="0" parent="E_N8N_YOLO" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#FFFFFF;fontColor=#8E44AD;fontStyle=1" value="HTTP API 呼叫" vertex="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="E_N8N_Gemini" edge="1" parent="1" source="N8N" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;startArrow=classic;endArrow=classic;strokeWidth=2;strokeColor=#8E44AD;" target="Gemini">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="420" y="480" />
+          <mxPoint x="340" y="480" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="L_N8N_Gemini" connectable="0" parent="E_N8N_Gemini" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#FFFFFF;fontColor=#8E44AD;fontStyle=1" value="n8n 內建節點" vertex="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="E_N8N_DB" edge="1" parent="1" source="N8N" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;startArrow=classic;endArrow=classic;strokeWidth=2;strokeColor=#2980B9;" target="DB">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="460" y="480" />
+          <mxPoint x="540" y="480" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="L_N8N_DB" connectable="0" parent="E_N8N_DB" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#FFFFFF;fontColor=#2980B9;fontStyle=1" value="資料庫連接器" vertex="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="E_YOLO_GCS" edge="1" parent="1" source="YOLO" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2;strokeColor=#555555;" target="GCS">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="210" y="700" />
+          <mxPoint x="680" y="700" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="L
 
 ---
 
