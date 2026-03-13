@@ -94,51 +94,51 @@ graph TB
 graph LR
     subgraph INPUT["資料輸入來源"]
         CRAWLER[品牌爬蟲 / 外部資料]
-        USER[使用者互動資料]
+        USER_DATA[使用者互動資料]
         IMAGE[使用者照片]
-        GA[GA4 行為事件]
+        GA_EVENT[GA4 行為事件]
     end
 
     subgraph ETL_LAYER["ETL 與資料轉換層"]
         STAGE1[Stage 1 原始資料擷取]
         STAGE2[Stage 2 成分補全]
-        STAGE3[Stage 3 成分統計 / 清洗]
+        STAGE3[Stage 3 成分統計與清洗]
         STAGE4[Stage 4 標準化映射]
         STAGE5[Stage 5 結構化載入]
     end
 
     subgraph DB_LAYER["資料儲存層"]
         SQL[(Cloud SQL)]
-        GCS[Cloud Storage]
+        GCS_DATA[Cloud Storage]
     end
 
     subgraph SERVICE["數據服務與推薦層"]
-        PROFILE[使用者膚況 / 偏好建模]
+        PROFILE[使用者膚況與偏好建模]
         CANDIDATE[候選池生成]
         RANKING[加權排序 / 回退機制]
         SNAPSHOT[JSON Snapshot / Log]
     end
 
     subgraph AI_LAYER["AI 模型服務"]
-        YOLO[YOLO 影像辨識]
+        YOLO_IMG[YOLO 影像辨識]
         LLM[Gemini 分析服務]
     end
 
     subgraph APP["應用層"]
-        LIFF[LIFF Web App]
-        LINE[LINE Bot]
+        LIFF_APP[LIFF Web App]
+        LINE_BOT[LINE Bot]
     end
 
     CRAWLER --> STAGE1
-    USER --> PROFILE
-    IMAGE --> YOLO
-    GA --> PROFILE
+    USER_DATA --> PROFILE
+    IMAGE --> YOLO_IMG
+    GA_EVENT --> PROFILE
 
     STAGE1 --> STAGE2 --> STAGE3 --> STAGE4 --> STAGE5
     STAGE5 --> SQL
 
-    YOLO --> GCS
-    YOLO --> PROFILE
+    YOLO_IMG --> GCS_DATA
+    YOLO_IMG --> PROFILE
     LLM --> PROFILE
 
     SQL --> CANDIDATE
@@ -147,12 +147,12 @@ graph LR
     RANKING --> SNAPSHOT
     SNAPSHOT --> SQL
 
-    RANKING --> LIFF
-    RANKING --> LINE
+    SNAPSHOT --> LIFF_APP
+    SNAPSHOT --> LINE_BOT
 
     style SQL fill:#e8f5e9,stroke:#333,stroke-width:1.5px
-    style GCS fill:#e8f0fe,stroke:#333,stroke-width:1.5px
-    style YOLO fill:#fce4ec,stroke:#333,stroke-width:1.5px
+    style GCS_DATA fill:#e8f0fe,stroke:#333,stroke-width:1.5px
+    style YOLO_IMG fill:#fce4ec,stroke:#333,stroke-width:1.5px
     style LLM fill:#f3e5f5,stroke:#333,stroke-width:1.5px
     style RANKING fill:#fff8e1,stroke:#333,stroke-width:2px
 ```
