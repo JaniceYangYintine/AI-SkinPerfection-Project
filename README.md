@@ -1,6 +1,7 @@
 # 🌟 AI 皮膚偵測保養品推薦系統
 
 > 基於 LINE LIFF 的智能美膚分析與個人化推薦系統
+> https://drive.google.com/file/d/1fVEqMXnMHCvVt-2XvzLgR0_rvkzWPJgn/view?usp=sharing
 
 ## 📋 專案簡介
 
